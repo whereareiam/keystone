@@ -1,10 +1,10 @@
 ---
-version: 0.0.2
+version: 1.0.0
 ---
 
-# Keystone 0.0.2 - [Short subtitle]
+# Keystone 1.0.0 - Stable messages
 
-[1-2 sentence summary of the release.]
+Keystone 1.0.0 is the first stable release: actors, the serializer engine, decorators and placeholders keep their API from here on. It adds string templates, configurable placeholder formats and scoped decorators; plugins written against 0.0.1 need the upgrade steps below.
 
 ## Highlights
 
