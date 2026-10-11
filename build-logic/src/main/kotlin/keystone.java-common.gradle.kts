@@ -1,5 +1,6 @@
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
 
@@ -31,22 +32,26 @@ tasks.withType<Test>().configureEach {
 }
 
 extensions.configure<PublishingExtension> {
+    publications.withType<MavenPublication>().configureEach {
+        pom {
+            url.set("https://github.com/whereareiam/keystone")
+        }
+    }
+
     repositories {
         maven {
-            val realm = providers.environmentVariable("PUBLISH_REALM")
-                .orElse(
-                    buildVersion.map { versionString ->
-                        if (versionString.contains("dev", ignoreCase = true)) "development" else "release"
-                    }
-                )
+            val base = providers.environmentVariable("PUBLISH_MAVEN_BASE_URL")
+                .orElse("https://registry.whereareiam.me/maven")
                 .get()
-                .lowercase()
+            val repository = providers.environmentVariable("PUBLISH_MAVEN_REPOSITORY")
+                .orElse("packages")
+                .get()
 
-            url = uri("https://maven.whereareiam.me/$realm")
+            url = uri("$base/$repository")
 
             credentials {
-                username = providers.environmentVariable("PUBLISH_USER").orNull.orEmpty()
-                password = providers.environmentVariable("PUBLISH_TOKEN").orNull.orEmpty()
+                username = providers.environmentVariable("PUBLISH_USER").orNull
+                password = providers.environmentVariable("PUBLISH_TOKEN").orNull
             }
         }
     }
