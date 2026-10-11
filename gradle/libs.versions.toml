@@ -11,7 +11,7 @@ adventure = "4.17.0"
 adventure-minimessage = "4.17.0"
 adventure-gson = "4.17.0"
 adventure-legacy = "4.17.0"
-adventure-plain = "4.17.0"
+adventure-plain = "5.2.0"
 
 [libraries]
 
