@@ -41,13 +41,14 @@ class MiniMessageAdapterLegacyTest {
 	}
 
 	@Test
-	void coloursKeepTheDecorationsBeforeThem() {
-		assertEquals("[bold]Bold |[red,bold]Red", runs("&lBold &cRed"));
+	void coloursEndTheDecorationsBeforeThem() {
+		assertEquals("[bold]Bold |[red]Red", runs("&lBold &cRed"));
 	}
 
 	@Test
-	void codesRightAfterCodesStayAsTyped() {
-		assertEquals("[green]&lHi", runs("&a&lHi"));
+	void codesRightAfterCodes() {
+		assertEquals("[green,bold]Hi", runs("&a&lHi"));
+		assertEquals("[#ff0000,bold]Hi", runs("&#ff0000&lHi"));
 	}
 
 	@Test
