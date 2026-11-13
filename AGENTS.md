@@ -8,14 +8,17 @@ plain text). Templates render the same pipeline to strings.
 ## Modules
 
 - `keystone-api`: what plugins compile against. `Actor`, the serializer engine, adapter and decorator
-  contracts, `SerializerContent` and `SerializerOptions` (placeholder formats), and the template
-  engine with `MessageTemplate`, `StreamMessageTemplate` and `TemplateSection`. Public API: every
-  change is compatibility-sensitive and needs complete Javadocs.
-- `keystone-common`: `DefaultSerializerEngine` and the format adapters (MiniMessage with legacy
-  codes, legacy `&` and `§`, Gson, plain text). Adventure's serializers stay `compileOnly`; the
-  plugin or platform provides them.
-- `keystone`: the entry point plugins depend on (`Serializers`), which creates engines and registers
-  the built-in adapters and decorators (`PrefixDecorator`, `PlayerNameDecorator`).
+  contracts, `LegacyCodeConverter` with its closed types `LegacyCode` and `LegacyInput` in `type`,
+  `SerializerContent` and `SerializerOptions` (placeholder formats), and the template engine with
+  `MessageTemplate`, `StreamMessageTemplate` and `TemplateSection`. Public API: every change is
+  compatibility-sensitive and needs complete Javadocs.
+- `keystone-common`: `DefaultSerializerEngine`, the format adapters (MiniMessage with legacy
+  codes, legacy `&` and `§`, Gson, plain text) and the legacy code converter the MiniMessage adapter
+  applies (`serializer/legacy`). Adventure's serializers stay `compileOnly`; the plugin or platform
+  provides them.
+- `keystone`: the entry point plugins depend on (`Serializers`), which creates engines, registers
+  the built-in adapters and decorators (`PrefixDecorator`, `PlayerNameDecorator`) and hands out the
+  legacy code converter (`legacyCodes()`).
 - `build-logic`: the `keystone.java-common` convention every module applies (Java 17, Lombok,
   publishing, the version from `VERSION`).
 

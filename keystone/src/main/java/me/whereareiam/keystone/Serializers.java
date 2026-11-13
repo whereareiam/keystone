@@ -2,9 +2,11 @@ package me.whereareiam.keystone;
 
 import me.whereareiam.keystone.common.serializer.DefaultSerializerEngine;
 import me.whereareiam.keystone.common.serializer.adapter.*;
+import me.whereareiam.keystone.common.serializer.legacy.DefaultLegacyCodeConverter;
 import me.whereareiam.keystone.decorator.PlayerNameDecorator;
 import me.whereareiam.keystone.decorator.PrefixDecorator;
 import me.whereareiam.keystone.model.SerializerOptions;
+import me.whereareiam.keystone.serializer.LegacyCodeConverter;
 import me.whereareiam.keystone.serializer.MessageDecorator;
 import me.whereareiam.keystone.serializer.SerializerAdapter;
 import me.whereareiam.keystone.serializer.SerializerEngine;
@@ -16,6 +18,27 @@ import org.jetbrains.annotations.NotNull;
  */
 @SuppressWarnings("unused")
 public final class Serializers {
+	private static final LegacyCodeConverter LEGACY_CODES = new DefaultLegacyCodeConverter();
+
+	/**
+	 * Gets the converter that turns legacy codes, such as {@code &c} or {@code &#ff0000}, into MiniMessage tags,
+	 * the one the MiniMessage adapter applies when legacy colors are enabled. Unlike the adapter, it lets the
+	 * caller choose which codes to convert:
+	 * <pre>{@code
+	 * String miniMessage = Serializers.legacyCodes().toMiniMessage(
+	 *         playerText,
+	 *         LegacyInput.MINIMESSAGE,
+	 *         code -> code instanceof LegacyCode.NamedColor
+	 * );
+	 * }</pre>
+	 *
+	 * @return the legacy code converter, shared by every caller
+	 */
+	@NotNull
+	public static LegacyCodeConverter legacyCodes() {
+		return LEGACY_CODES;
+	}
+
 	/**
 	 * Creates a new SerializerEngine with the given options.
 	 * Automatically registers built-in adapters and decorators based on options.
