@@ -1,20 +1,15 @@
 ---
-version: 1.0.0
+version: 1.1.0
 ---
 
-# Keystone 1.0.0 - Stable messages
+# Keystone 1.1.0 - Legacy codes
 
-Keystone 1.0.0 is the first stable release: actors, the serializer engine, decorators and placeholders keep their API from here on. It adds string templates, configurable placeholder formats and scoped decorators; plugins written against 0.0.1 need the upgrade steps below.
+Keystone 1.1.0 makes its legacy code handling public: `Serializers.legacyCodes()` turns `&` and `§` codes into MiniMessage tags and lets a plugin choose which codes to convert, such as only the colours a player may use.
 
 ## Highlights
 
-* Templates: `TemplateEngine` renders a message through decorators and placeholders to a string without turning it into a component; `MessageTemplate` and `StreamMessageTemplate` render one template or one line per stream item, with placeholders and `TemplateSection`s.
-* Placeholders: the placeholder format is configurable through `SerializerOptions.placeholderFormat`, with `{name}`, `%name%`, `$name` or a custom format.
-* Decorators: decorators can be registered for a scope with `Serializers.registerScopedDecorator`; a message may name its scope.
-* MiniMessage: with legacy input enabled, legacy `&` and `§` codes are applied inside MiniMessage text instead of the whole message being parsed as legacy text.
+* Formats: `LegacyCodeConverter` reads `&0`-`&f`, `&k`-`&o`, `&r`, `&#rrggbb` and `&x&r&r&g&g&b&b`, hands each code to a filter as a typed `LegacyCode` and keeps the codes the filter refuses as typed. It reads plain text, which it escapes, or MiniMessage text, whose tags it keeps.
 
 ## Upgrading
 
-* `Player` was removed; implement `Actor` instead. The `playerName` placeholder is filled for every receiver, not only a `Player`.
-* Placeholder keys are names without their format: `addPlaceholder("coins", ...)` instead of `"{coins}"`.
-* `PlayerNameDecorator` and `PrefixDecorator` moved to `me.whereareiam.keystone.decorator` in `keystone`.
+* With legacy colors enabled, MiniMessage messages now read legacy codes as the vanilla client does: a colour code ends the decorations before it (`&lBold &cRed` is no longer bold), and a code right after another counts (`&a&lHi` is green and bold instead of showing `&l`).
