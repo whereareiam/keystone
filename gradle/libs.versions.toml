@@ -25,6 +25,8 @@ placeholderapi = "2.12.3"
 papiproxybridge = "1.8.4"
 # 3.2 needs Java 25.
 miniplaceholders = "3.1.0"
+# Intercept's API from whereareiam/Intercept#14, built into mavenLocal until it is published.
+intercept = "dev"
 
 [libraries]
 
@@ -64,6 +66,7 @@ bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bunge
 placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
 papiproxybridge = { group = "net.william278", name = "papiproxybridge", version.ref = "papiproxybridge" }
 miniplaceholders = { group = "io.github.miniplaceholders", name = "miniplaceholders-api", version.ref = "miniplaceholders" }
+intercept-api = { group = "me.whereareiam.intercept", name = "intercept-api", version.ref = "intercept" }
 
 [bundles]
 adventure = ["adventure-api", "adventure-minimessage"]

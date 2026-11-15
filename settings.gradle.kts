@@ -58,3 +58,6 @@ project(":integration-papiproxybridge").projectDir = file("keystone-integration/
 
 include(":integration-miniplaceholders")
 project(":integration-miniplaceholders").projectDir = file("keystone-integration/integration-miniplaceholders")
+
+include(":integration-intercept")
+project(":integration-intercept").projectDir = file("keystone-integration/integration-intercept")

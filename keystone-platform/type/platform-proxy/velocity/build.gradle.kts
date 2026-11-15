@@ -7,6 +7,7 @@ description = "Keystone on Velocity, with Velocity's own Adventure and Semantica
 dependencies {
     api(projects.platformCommon)
     api(libs.semantica.format.adventure.v5)
+    implementation(projects.integrationIntercept)
     implementation(projects.integrationPapiproxybridge)
     implementation(projects.integrationMiniplaceholders)
 

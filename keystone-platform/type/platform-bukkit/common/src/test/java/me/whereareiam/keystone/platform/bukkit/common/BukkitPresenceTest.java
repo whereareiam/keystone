@@ -1,10 +1,14 @@
 package me.whereareiam.keystone.platform.bukkit.common;
 
+import me.whereareiam.keystone.common.integration.Integration;
 import org.bukkit.Server;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -23,8 +27,8 @@ class BukkitPresenceTest {
 	}
 
 	@Test
-	void theSharedIntegrationsArePlaceholderApi() {
-		assertTrue(BukkitIntegrations.shared().stream().anyMatch(integration -> integration.plugin().equals("PlaceholderAPI")));
+	void theSharedIntegrationsArePlaceholderApiAndIntercept() {
+		assertEquals(List.of("PlaceholderAPI", "Intercept"), BukkitIntegrations.shared().stream().map(Integration::plugin).toList());
 	}
 
 	static Plugin server(Plugin... plugins) {
