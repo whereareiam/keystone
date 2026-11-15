@@ -155,8 +155,10 @@ placeholders as written.
 
 ## Languages
 
-A recipient's languages are, in order: those of the language resolvers, the client's language, and the fallback.
-A plugin that stores a player's choice adds a resolver:
+A recipient's languages are, in order: the language the player chose in Intercept, when Intercept runs on Paper or
+Velocity, those of the plugin's own resolvers, the client's language, and the fallback. On Paper, list Intercept
+under `softdepend`, and never relocate `me.whereareiam.intercept`: its API is loaded from Intercept. A plugin that
+stores a player's choice itself adds a resolver:
 
 ```java
 .languages(languages -> languages
