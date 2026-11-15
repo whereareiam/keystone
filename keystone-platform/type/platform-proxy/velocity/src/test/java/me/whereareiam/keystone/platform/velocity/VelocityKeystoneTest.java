@@ -102,6 +102,6 @@ class VelocityKeystoneTest {
 
 		assertTrue(builder.present("PAPIProxyBridge"));
 		assertFalse(builder.present("MiniPlaceholders"));
-		assertEquals(2, builder.integrations().size());
+		assertEquals(3, builder.integrations().size());
 	}
 }

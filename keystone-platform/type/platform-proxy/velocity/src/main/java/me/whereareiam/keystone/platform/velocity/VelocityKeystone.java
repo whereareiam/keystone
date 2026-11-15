@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import me.whereareiam.keystone.common.integration.Integration;
 import me.whereareiam.keystone.common.platform.Platform;
 import me.whereareiam.keystone.common.render.AdventureFormat;
+import me.whereareiam.keystone.integration.intercept.InterceptIntegration;
 import me.whereareiam.keystone.integration.miniplaceholders.MiniPlaceholdersIntegration;
 import me.whereareiam.keystone.integration.papiproxybridge.PapiProxyBridgeIntegration;
 import me.whereareiam.keystone.platform.KeystoneBuilder;
@@ -67,7 +68,7 @@ public final class VelocityKeystone {
 
 		@Override
 		protected @NotNull List<Integration> integrations() {
-			return List.of(new PapiProxyBridgeIntegration(), new MiniPlaceholdersIntegration());
+			return List.of(new PapiProxyBridgeIntegration(), new MiniPlaceholdersIntegration(), new InterceptIntegration());
 		}
 
 		@Override

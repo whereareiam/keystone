@@ -6,6 +6,7 @@ description = "What Keystone's Bukkit and Paper share: players, the plugin's log
 
 dependencies {
     api(projects.platformCommon)
+    implementation(projects.integrationIntercept)
     implementation(projects.integrationPlaceholderapi)
 
     compileOnly(libs.spigot)
