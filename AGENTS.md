@@ -27,6 +27,7 @@ keystone-integration/
   integration-placeholderapi/   text placeholders, Bukkit and Paper        :integration-placeholderapi
   integration-papiproxybridge/  text placeholders, proxies                 :integration-papiproxybridge
   integration-miniplaceholders/ tag placeholders, Paper and Velocity       :integration-miniplaceholders
+  integration-intercept/        language resolver, Paper and Velocity      :integration-intercept
 ```
 
 - `keystone-api` is what plugins compile against: `Keystone`, `recipient/` (`Recipient`, `RecipientGroup`,
@@ -51,6 +52,8 @@ keystone-integration/
 - `VERSION=<version> ./gradlew publishToMavenLocal` lets a plugin build against a local version.
 - Semantica comes from the registry, as a release or a development build (`dev-<commit>`); `gradle/libs.versions.toml`
   names it.
+- Intercept's API (`intercept-api`, version `dev`) comes from mavenLocal until Intercept publishes it; build it from
+  whereareiam/Intercept with `./gradlew publishToMavenLocal`.
 - Paper's tests run on the Adventure of the Paper API they compile against (`adventure-paper`), since its types are
   built on it.
 
