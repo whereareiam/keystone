@@ -1,32 +1,30 @@
 plugins {
-    id("keystone.java-common")
+    id("module-java")
+    `java-test-fixtures`
 }
+
+description = "Keystone's delivery: rendering through Semantica per recipient, display.yml, the language chain, the gate, player markup, the console with ANSI colours and the Configura module of contents and displays"
 
 dependencies {
-    api(project(":keystone-api"))
+    api(projects.keystoneApi)
+    api(libs.semantica.common)
+    api(libs.configura)
 
-    // Adventure serialization
-    compileOnly(libs.adventure.minimessage)
-    compileOnly(libs.adventure.gson)
-    compileOnly(libs.adventure.legacy)
-    compileOnly(libs.adventure.plain)
+    compileOnly(libs.bundles.adventure)
 
-    testImplementation(libs.junit.jupiter)
-    testImplementation(libs.adventure.minimessage)
-    testImplementation(libs.adventure.legacy)
-    testImplementation(libs.adventure.plain)
-    testRuntimeOnly(libs.junit.platform.launcher)
+    testFixturesApi(libs.bundles.adventure)
+    testFixturesApi(libs.adventure.plain)
+    testFixturesApi(libs.semantica.syntax.icu)
+    testFixturesApi(libs.semantica.testing)
+    testFixturesImplementation(libs.semantica.format.adventure.v5)
+    testFixturesCompileOnly(libs.jetbrains.annotations)
+    testFixturesCompileOnly(libs.lombok)
+    testFixturesAnnotationProcessor(libs.lombok)
+
+    testImplementation(libs.semantica.format.adventure.v5)
 }
 
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            from(components["java"])
-            artifactId = "keystone-common"
-            pom {
-                name.set("keystone-common")
-                description.set("Common implementations for Keystone")
-            }
-        }
-    }
-}
+// Test fixtures are for Keystone's own tests; they are not published.
+val javaComponent = components["java"] as AdhocComponentWithVariants
+javaComponent.withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
+javaComponent.withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }

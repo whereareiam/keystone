@@ -59,7 +59,7 @@ jobs:
 
       - uses: whereareiam/devops/primitive/setup/gradle@v3
         with:
-          toolchain-versions: "17"
+          toolchain-versions: "21"
 
       - name: Build and test
         env:
