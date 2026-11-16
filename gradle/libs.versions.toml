@@ -26,7 +26,7 @@ papiproxybridge = "1.8.4"
 # 3.2 needs Java 25.
 miniplaceholders = "3.1.0"
 # Intercept's API from whereareiam/Intercept#14, built into mavenLocal until it is published.
-intercept = "dev"
+intercept = "dev-2210051"
 
 [libraries]
 
