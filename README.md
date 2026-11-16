@@ -29,62 +29,80 @@ or the server ships.
 
 ## Send a text
 
-Declare the texts with Semantica's `@Messages`, build Semantica, then Keystone:
+Declare the texts with Semantica's `@Messages`, build Semantica, then a messenger:
 
 ```java
-import me.whereareiam.keystone.Keystone;
+import me.whereareiam.keystone.Messenger;
 import me.whereareiam.keystone.platform.paper.PaperKeystone;
 import me.whereareiam.semantica.Message;
 import me.whereareiam.semantica.declaration.Default;
 import me.whereareiam.semantica.declaration.Messages;
 import org.bukkit.command.CommandSender;
 
-@Messages("commands")
-public interface CommandMessages {
-	@Default("<white>You must wait <gray>{time, number} seconds</gray> before using this command again.")
-	Message cooldown(double time);
+@Messages("economy")
+public interface EconomyMessages {
+	@Default("<white>Your balance is <gold>{amount, number} coins</gold>.")
+	Message balance(double amount);
 }
 
-Keystone<CommandSender> keystone = PaperKeystone.builder(plugin)
+Messenger<CommandSender> messenger = PaperKeystone.messenger(plugin)
 		.semantica(semantica)
-		.display(plugin.getDataFolder().toPath().resolve("display.yml"))
 		.build();
 
-CommandMessages messages = new GeneratedCommandMessages();
-keystone.recipients().of(sender).send(messages.cooldown(3.5));
+EconomyMessages messages = new GeneratedEconomyMessages();
+messenger.send(sender, messages.balance(250));
 ```
 
 The player sees the text in their language: the language their client reports, then the fallback, which is
 Semantica's default locale unless `languages(l -> l.fallback(...))` sets another. A text missing in one language is
 taken from the next. Values, such as a player's name, are never read as markup.
 
-Other recipients:
+The plugin chooses who receives a text; the messenger shows it to each of them:
 
 ```java
-keystone.recipients().players().send(messages.restart(30));
-keystone.recipients().permission("myplugin.staff").send(messages.staffJoined(name));
-keystone.recipients().player(uniqueId).ifPresent(player -> player.send(messages.welcome()));
-keystone.console().send(messages.reloaded(version, millis));
+messenger.send(Bukkit.getOnlinePlayers(), messages.restart(30));
+messenger.send(Bukkit.getConsoleSender(), messages.reloaded(version, millis));
 ```
 
-The builders of the other platforms take what that platform needs:
+A text sent to many players is rendered once for each distinct result: players who share a language and whose
+placeholders fill in alike share one rendering.
 
-| Platform | Builder | Command sender |
+Each platform has its own entry class:
+
+| Platform | Messenger | Sender |
 | --- | --- | --- |
-| Paper | `PaperKeystone.builder(plugin)` | `CommandSender` |
-| Bukkit, Spigot | `BukkitKeystone.builder(plugin, audiences)` with the plugin's `BukkitAudiences` | `CommandSender` |
-| Velocity | `VelocityKeystone.builder(server, plugin, logger)` | `CommandSource` |
-| BungeeCord | `BungeeKeystone.builder(plugin, audiences)` with the plugin's `BungeeAudiences` | `CommandSender` |
+| Paper | `PaperKeystone.messenger(plugin)` | `CommandSender` |
+| Bukkit, Spigot | `BukkitKeystone.messenger(plugin, audiences)` with the plugin's `BukkitAudiences` | `CommandSender` |
+| Velocity | `VelocityKeystone.messenger(server, plugin, logger)` | `CommandSource` |
+| BungeeCord | `BungeeKeystone.messenger(plugin, audiences)` with the plugin's `BungeeAudiences` | `CommandSender` |
 
 On Bukkit and BungeeCord the plugin creates its audiences when it enables and closes them when it disables.
 
+### A plugin's own player type
+
+A plugin that keeps its own player type, the same on every platform, builds the messenger over that type and says
+once how Keystone sees one of its players:
+
+```java
+Messenger<GamePlayer> messenger = PaperKeystone.messenger(plugin, player -> new Recipient() {
+			public String name() { return player.getName(); }
+			public Optional<UUID> uniqueId() { return Optional.of(player.getUniqueId()); }
+			public Optional<Locale> clientLanguage() { return Optional.ofNullable(player.getLocale()); }
+			public Audience audience() { return player.getAudience(); }
+		})
+		.semantica(semantica)
+		.build();
+
+messenger.send(game.getPlayers(), messages.roundStarted(round));
+```
+
 ## Let admins choose how a text is shown
 
-Every message goes to the chat. `display.yml` lists the messages shown as more than that, by key; `true` stands for
-the message's own text, and chat stays on unless it says `false`:
+Every message goes to the chat. A display file, such as `display.yml`, lists the messages shown as more than that,
+by key; `true` stands for the message's own text, and chat stays on unless it says `false`:
 
 ```yaml
-commands.cooldown:
+economy.balance:
   chat: false
   actionbar: true
 
@@ -96,14 +114,24 @@ chirper.restart:
   sound: { name: block.note_block.pling, volume: 1, pitch: 1.2 }
 ```
 
-A missing file has no entries. `keystone.reload()` reads it again; when it cannot be read, a
-`DisplayFileException` names the file and the entry, and the displays read before stay in use.
+The plugin, and each of its modules, adds its own file under an owner's name:
+
+```java
+messenger.displays().add("myplugin", dataFolder.resolve("display.yml"));
+messenger.displays().add("mymodule", moduleFolder.resolve("display.yml"));   // when the module enables
+messenger.displays().remove("mymodule");                                     // when it disables
+messenger.displays().reload();
+```
+
+A missing file has no entries, and the file added last wins a key that several files list. When a file cannot be
+read, a `DisplayFileException` names the file and the entry; `add` then changes nothing, and after a failed
+`reload` the displays read before stay in use.
 
 ## Text written in a config
 
 A config field of type `Content` holds one string: the admin's own text, a translated message pulled in with
-`{@key}`, or both. A field of type `Display` holds the parts, as in `display.yml`. Register Keystone's Jackson
-module with Configura to read and write both:
+`{@key}`, or both. A field of type `Display` holds the parts, as in a display file, or one string for the chat alone.
+Register Keystone's Jackson module with Configura to read and write both:
 
 ```java
 import me.whereareiam.keystone.common.configura.KeystoneModule;
@@ -113,19 +141,21 @@ Configura configura = Configura.builder()
 		.module(new KeystoneModule())
 		.build();
 
-public class Announcement {
-	public Display display = Display.chat(Content.of("{@chirper.vote}"));
+public class Announcements {
+	public Display welcome = Display.chat(Content.of("<gold>Welcome, {player}!"));
+	public Display vote = Display.chat(Content.of("{@chirper.vote}"));
 }
 ```
 
 ```yaml
-display:
+welcome: "<gold>Welcome, {player}!"
+vote:
   chat: "<gold>{@chirper.vote} <gray>(ends Sunday)"
   bossbar: { text: "<green>/vote", color: green, seconds: 10 }
 ```
 
 ```java
-recipient.send(announcement.display, Values.of("player", name));
+messenger.send(player, announcements.welcome.with("player", name));
 ```
 
 Check each content after loading with `semantica.check(content)` and skip an entry with issues, naming its file and
@@ -138,10 +168,10 @@ PAPIProxyBridge on Velocity and BungeeCord, and MiniPlaceholders' global placeho
 Placeholders apply to what translators and admins wrote, never to values: a player who types `%player_name%` into a
 chat message sees it as typed.
 
-A plugin adds its own, as text or as MiniMessage tags:
+A plugin adds its own, as text filled in for each recipient or as MiniMessage tags that are the same for everyone:
 
 ```java
-PaperKeystone.builder(plugin)
+PaperKeystone.messenger(plugin)
 		.semantica(semantica)
 		.placeholders(placeholders -> placeholders
 				.add((Placeholders.Text) (recipient, text) -> text.replace("{server}", serverName))
@@ -149,7 +179,7 @@ PaperKeystone.builder(plugin)
 		.build();
 ```
 
-An integration is installed when its plugin is enabled before Keystone is built, so list it under `softdepend`.
+An integration is installed when its plugin is enabled before the messenger is built, so list it under `softdepend`.
 PAPIProxyBridge answers over the network; a text waits for it at most 100 ms and is otherwise shown with its
 placeholders as written.
 
@@ -168,14 +198,17 @@ stores a player's choice itself adds a resolver:
 
 ## Hold texts until a player is ready
 
-The gate holds texts sent to a player, such as before they log in, and shows them in order when the plugin releases
-the player:
+A rule given to the builder holds the texts sent to a player, such as before they log in; the plugin releases them
+in order when the player is ready:
 
 ```java
-keystone.gate(recipient -> loggedIn(recipient) ? Gate.SEND : Gate.HOLD);
+PaperKeystone.messenger(plugin)
+		.semantica(semantica)
+		.hold(recipient -> !loggedIn(recipient))
+		.build();
 
-keystone.release(recipient);   // after login
-keystone.discard(recipient);   // when they leave without logging in
+messenger.release(player);   // after login
+messenger.discard(player);   // when they leave without logging in
 ```
 
 The console is never held. At most 256 texts are held per player; past that the oldest is dropped.
@@ -185,7 +218,7 @@ The console is never held. At most 256 texts are held per player; past that the 
 `Markup` reads a chat message with only the tags a policy allows, and the legacy codes a filter accepts:
 
 ```java
-Markup markup = keystone.markup(TagPolicy.of(TagPolicy.Group.COLOR, TagPolicy.Group.DECORATION))
+Markup markup = PaperKeystone.markup(TagPolicy.of(TagPolicy.Group.COLOR, TagPolicy.Group.DECORATION))
 		.legacyCodes(code -> !(code instanceof LegacyCode.Reset));
 
 Component text = markup.read(typed);
@@ -196,14 +229,15 @@ A colour ends the colours and decorations before it, as in the vanilla client.
 
 ## The console and the start banner
 
-The console writes each text to the plugin's log with ANSI colours, in the fallback language. A banner prints its
-lines between empty lines:
+Texts sent to the console are written to the plugin's log with ANSI colours, in the fallback language. A banner
+prints its lines between empty lines:
 
 ```java
-keystone.console().print(Banner.of(
+messenger.print(Banner.of(
 				Content.of("<gold>  █▀ █▀▀   <white>MyPlugin v<gray>{version}"),
 				Content.of("<gold>  ▄█ █▄▄   <white>Platform: <gray>{platform}"))
-		.values(Values.of("version", version).and("platform", "Paper")));
+		.with("version", version)
+		.with("platform", "Paper"));
 ```
 
 ## Building
