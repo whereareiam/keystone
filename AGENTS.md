@@ -1,19 +1,21 @@
 # AGENTS.md
 
 Keystone delivers the texts of a Minecraft plugin; Semantica resolves and renders them. A plugin sends a
-Semantica `Message`, a `Content` from a config or a `Display` to a `Recipient`; Keystone resolves it in the
-recipient's languages, fills the recipient's placeholders into the literal parts, renders it with the plugin's
-`TagPolicy` and shows each part (chat, action bar, title, boss bar, sound). Keystone keeps no settings file; plugins
-configure it through a platform's builder.
+Semantica `Message` or a `Display` to its senders through a `Messenger`; Keystone resolves it in each recipient's
+languages, fills the recipient's placeholders into the literal parts, renders it with the plugin's `TagPolicy`
+(once per distinct result) and shows each part (chat, action bar, title, boss bar, sound). Beside the messenger
+stand tools a plugin uses on their own: `Markup` for player text, the Configura module for `Content` and `Display`
+fields. Keystone keeps no settings file; plugins configure it through a platform's entry class.
 
 ## Modules
 
 ```text
 keystone-api/                 contracts and models                         :keystone-api
-keystone-common/              delivery, display.yml, languages, gate,      :keystone-common
-                              markup and legacy codes, console, Configura
+keystone-common/              messenger, delivery, display files,          :keystone-common
+                              languages, holding, markup and legacy
+                              codes, console, Configura
 keystone-platform/
-  common/                     KeystoneBuilder, the Adventure 4 and 5       :platform-common
+  common/                     MessengerBuilder, the Adventure 4 and 5      :platform-common
                               formats of Semantica
   type/
     platform-bukkit/
@@ -30,13 +32,17 @@ keystone-integration/
   integration-intercept/        language resolver, Paper and Velocity      :integration-intercept
 ```
 
-- `keystone-api` is what plugins compile against: `Keystone`, `recipient/` (`Recipient`, `RecipientGroup`,
-  `Recipients`, `Console`), `model/` (`Display`, `Values`, `Banner`), `type/` (`Gate`, `LegacyCode`, and the sealed
-  `Part`s in `type/part/`), `Placeholders`, `LanguageResolver`, `Markup` and `exception/`. Public API: every change is
-  compatibility-sensitive and needs complete Javadocs.
-- `keystone-common` holds the logic; a platform only adapts it through `platform/Platform` and `platform/Sender`, and
-  picks Semantica's Adventure format through `render/AdventureFormat`. Its test fixtures (`testFixtures`) give every
-  module's tests a platform, senders that record what they are shown, and a Semantica with English and German texts.
+- `keystone-api` is what plugins compile against: `Messenger`, `Recipient`, `Displays`, `Markup`, `Placeholders`,
+  `LanguageResolver`, `model/` (`Display`, `Banner`), `type/` (`LegacyCode`, and the sealed `Part`s in
+  `type/part/`) and `exception/`. Public API: every change is compatibility-sensitive and needs complete Javadocs.
+- A platform's entry class (`PaperKeystone`, `BukkitKeystone`, `VelocityKeystone`, `BungeeKeystone`) starts a
+  messenger over the platform's senders or, given a function that returns a `Recipient`, over the plugin's own
+  sender type, and hands out `markup(policy)`. Keystone never picks recipients: the plugin passes them.
+- `keystone-common` holds the logic; a platform only adapts it through `Platform` (console, log, later tasks) and
+  its `Recipient`s, and picks Semantica's Adventure format through `render/AdventureFormat`. A display is read
+  through classes Jackson binds (`configura/DisplayDocument` and its parts), never by walking nodes by hand. Its
+  test fixtures (`testFixtures`) give every module's tests a platform, recipients that record what they are shown,
+  and a Semantica with English and German texts.
 - Keystone's own classes use only Adventure API that versions 4 and 5 share, so one jar serves both; the platform
   module brings `format-adventure-v4` or `-v5`.
 - An integration is an `Integration`: the plugin it needs by name and what it installs. Its class names none of the
@@ -72,7 +78,7 @@ category of its label. Readers are plugin developers.
 
 - Titles use `Area: Description`, with a past-tense description of what changed for a plugin:
   `Introduced`, `Changed`, `Fixed`, `Removed`.
-- Areas: `Recipients` (sending, groups, the console), `Displays` (parts and `display.yml`), `Languages`,
+- Areas: `Recipients` (sending, holding, the console), `Displays` (parts and display files), `Languages`,
   `Placeholders`, `Markup` (player text and legacy codes), `Configuration` (the Configura module), `Platforms`.
   Add an area only for something plugins recognise by that name, such as a new platform or integration, and add it
   to this list in the same pull request.
