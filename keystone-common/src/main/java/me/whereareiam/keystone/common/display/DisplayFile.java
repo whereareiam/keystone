@@ -1,15 +1,13 @@
 package me.whereareiam.keystone.common.display;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import me.whereareiam.configura.Configura;
 import me.whereareiam.configura.type.Format;
+import me.whereareiam.keystone.common.configura.DisplayDocument;
 import me.whereareiam.keystone.common.configura.KeystoneModule;
 import me.whereareiam.keystone.exception.DisplayFileException;
 import me.whereareiam.keystone.model.Display;
-import me.whereareiam.semantica.Content;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,55 +17,29 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * The display file, {@code display.yml}: the displays of the translated messages shown as more than chat, by the
- * message's key. Every other message is shown in the chat alone. A missing file has no entries.
+ * Reads a display file, such as {@code display.yml}: the displays of the translated messages shown as more than
+ * chat, by the message's key. A missing file has no entries.
  * <pre>{@code
- * commands.cooldown:
+ * commands.balance:
  *   chat: false
  *   actionbar: true                 # the message's own text
  * }</pre>
  */
-public final class DisplayFile {
-	private final @Nullable Path path;
-	private final Configura configura;
-	private volatile Map<String, Display> entries = Map.of();
+final class DisplayFile {
+	private final Configura configura = Configura.builder()
+			.format(Format.YAML)
+			.module(new KeystoneModule())
+			.build();
 
 	/**
-	 * Creates the display file; {@link #load()} reads it.
+	 * Reads a file.
 	 *
-	 * @param path the file, or {@code null} when the plugin keeps none
-	 */
-	public DisplayFile(@Nullable Path path) {
-		this.path = path;
-		this.configura = Configura.builder()
-				.format(Format.YAML)
-				.module(new KeystoneModule())
-				.build();
-	}
-
-	/**
-	 * Returns the display of a translated message.
-	 *
-	 * @param key the message's key
-	 * @return its entry, or the chat alone when it has none
-	 */
-	public @NotNull Display of(@NotNull String key) {
-		Display display = entries.get(key);
-		if (display != null) return display;
-
-		return Display.chat(Content.of(DisplayEntry.reference(key)));
-	}
-
-	/**
-	 * Reads the file; the entries read before stay in use when it fails.
-	 *
+	 * @param path the file
+	 * @return its entries by message key
 	 * @throws DisplayFileException when the file or an entry cannot be read
 	 */
-	public void load() {
-		if (path == null || !Files.exists(path)) {
-			entries = Map.of();
-			return;
-		}
+	@NotNull Map<String, Display> read(@NotNull Path path) {
+		if (!Files.exists(path)) return Map.of();
 
 		JsonNode root = readRoot(path);
 		Map<String, Display> read = new LinkedHashMap<>();
@@ -77,7 +49,7 @@ public final class DisplayFile {
 			read.put(field.getKey(), entry(path, field.getKey(), field.getValue()));
 		}
 
-		entries = Collections.unmodifiableMap(read);
+		return Collections.unmodifiableMap(read);
 	}
 
 	private JsonNode readRoot(Path path) {
@@ -95,9 +67,10 @@ public final class DisplayFile {
 	}
 
 	private Display entry(Path path, String key, JsonNode node) {
-		ObjectMapper mapper = configura.mapper();
+		if (!node.isObject()) throw new DisplayFileException(path, key, "an entry is a map of parts, such as chat: false and actionbar: true", null);
+
 		try {
-			return mapper.treeToValue(DisplayEntry.normalize(key, node, mapper), Display.class);
+			return configura.mapper().treeToValue(node, DisplayDocument.class).toEntry(key);
 		} catch (Exception exception) {
 			throw new DisplayFileException(path, key, exception.getMessage(), exception);
 		}

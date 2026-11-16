@@ -1,7 +1,7 @@
 package me.whereareiam.keystone.platform.bukkit.common;
 
+import me.whereareiam.keystone.Recipient;
 import me.whereareiam.keystone.common.fixture.RecordingAudience;
-import me.whereareiam.keystone.common.platform.Sender;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
@@ -29,23 +29,11 @@ import static org.mockito.Mockito.when;
 class BukkitPlatformTest {
 	private final Plugin plugin = mock(Plugin.class);
 	private final Server server = mock(Server.class);
-	private final Player alice = mock(Player.class);
-	private final UUID aliceId = UUID.randomUUID();
 	private final BukkitPlatform platform = new NamingPlatform(plugin);
 
 	BukkitPlatformTest() {
 		when(plugin.getServer()).thenReturn(server);
-		when(alice.getName()).thenReturn("Alice");
-		doReturn(List.of(alice)).when(server).getOnlinePlayers();
-		when(server.getPlayer(aliceId)).thenReturn(alice);
 		when(server.getConsoleSender()).thenReturn(mock(ConsoleCommandSender.class));
-	}
-
-	@Test
-	void findsTheOnlinePlayers() {
-		assertEquals(List.of("Alice"), platform.players().stream().map(Sender::name).toList());
-		assertEquals("Alice", platform.player(aliceId).orElseThrow().name());
-		assertTrue(platform.player(UUID.randomUUID()).isEmpty());
 	}
 
 	@Test
@@ -85,8 +73,8 @@ class BukkitPlatformTest {
 		}
 
 		@Override
-		public @NotNull Sender sender(@NotNull CommandSender sender) {
-			return new Sender() {
+		public @NotNull Recipient recipient(@NotNull CommandSender sender) {
+			return new Recipient() {
 				@Override
 				public @NotNull String name() {
 					return String.valueOf(sender.getName());
@@ -100,11 +88,6 @@ class BukkitPlatformTest {
 				@Override
 				public @NotNull Optional<Locale> clientLanguage() {
 					return Optional.empty();
-				}
-
-				@Override
-				public boolean hasPermission(@NotNull String permission) {
-					return false;
 				}
 
 				@Override

@@ -72,6 +72,11 @@ class KeystoneModuleTest {
 	}
 
 	@Test
+	void aStringIsTheChatAlone() throws Exception {
+		assertEquals(Display.chat(Content.of("<gold>Welcome")), read("display: \"<gold>Welcome\"\n", Announcement.class).display);
+	}
+
+	@Test
 	void writesWhatItReadsLeavingOutDefaults() throws Exception {
 		Announcement announcement = new Announcement();
 		announcement.display = Display.of(
@@ -110,6 +115,8 @@ class KeystoneModuleTest {
 		assertThrows(JsonMappingException.class, () -> read("display: { sound: { name: \"Not A Key\" } }\n", Announcement.class));
 		assertThrows(JsonMappingException.class, () -> read("display: [chat]\n", Announcement.class));
 		assertThrows(JsonMappingException.class, () -> read("text: [a]\n", Announcement.class));
+		assertThrows(JsonMappingException.class, () -> read("display: { actionbar: true }\n", Announcement.class));
+		assertThrows(JsonMappingException.class, () -> read("display: { sound: { volume: 1 } }\n", Announcement.class));
 	}
 
 	private <T> T read(String yaml, Class<T> type) throws Exception {

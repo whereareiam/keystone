@@ -3,7 +3,7 @@ package me.whereareiam.keystone.integration.intercept;
 import lombok.RequiredArgsConstructor;
 import me.whereareiam.intercept.language.LanguageService;
 import me.whereareiam.keystone.LanguageResolver;
-import me.whereareiam.keystone.recipient.Recipient;
+import me.whereareiam.keystone.Recipient;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;

@@ -1,7 +1,7 @@
 package me.whereareiam.keystone.platform.paper;
 
 import io.papermc.paper.threadedregions.scheduler.AsyncScheduler;
-import me.whereareiam.keystone.Keystone;
+import me.whereareiam.keystone.Messenger;
 import me.whereareiam.keystone.common.fixture.TestSemantica;
 import me.whereareiam.semantica.Message;
 import net.kyori.adventure.text.Component;
@@ -42,9 +42,9 @@ class PaperKeystoneTest {
 		Player player = mock(Player.class);
 		when(player.getUniqueId()).thenReturn(UUID.randomUUID());
 		when(player.locale()).thenReturn(Locale.GERMAN);
-		Keystone<CommandSender> keystone = PaperKeystone.builder(plugin).semantica(TestSemantica.create()).build();
+		Messenger<CommandSender> messenger = PaperKeystone.messenger(plugin).semantica(TestSemantica.create()).build();
 
-		keystone.recipients().of(player).send(Message.of("greeting").with("player", "Alice"));
+		messenger.send(player, Message.of("greeting").with("player", "Alice"));
 
 		ArgumentCaptor<Component> sent = ArgumentCaptor.forClass(Component.class);
 		verify(player).sendMessage(sent.capture());

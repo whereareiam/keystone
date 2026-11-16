@@ -2,7 +2,7 @@ package me.whereareiam.keystone.integration.papiproxybridge;
 
 import lombok.RequiredArgsConstructor;
 import me.whereareiam.keystone.Placeholders;
-import me.whereareiam.keystone.recipient.Recipient;
+import me.whereareiam.keystone.Recipient;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;

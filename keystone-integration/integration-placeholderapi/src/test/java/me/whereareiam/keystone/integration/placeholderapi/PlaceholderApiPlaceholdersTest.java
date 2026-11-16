@@ -2,11 +2,9 @@ package me.whereareiam.keystone.integration.placeholderapi;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.whereareiam.keystone.Placeholders;
-import me.whereareiam.keystone.common.fixture.TestKeystone;
-import me.whereareiam.keystone.common.fixture.TestPlatform;
-import me.whereareiam.keystone.common.fixture.TestSender;
+import me.whereareiam.keystone.Recipient;
+import me.whereareiam.keystone.common.fixture.TestRecipient;
 import me.whereareiam.keystone.common.integration.Installation;
-import me.whereareiam.keystone.recipient.Recipient;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.junit.jupiter.api.Test;
@@ -26,10 +24,9 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 class PlaceholderApiPlaceholdersTest {
-	private final TestSender alice = TestSender.player("Alice", Locale.ENGLISH);
-	private final TestPlatform platform = new TestPlatform();
-	private final Recipient player = TestKeystone.create(platform, null).recipients().of(alice);
-	private final Recipient console = TestKeystone.create(platform, null).console();
+	private final TestRecipient alice = TestRecipient.player("Alice", Locale.ENGLISH);
+	private final Recipient player = alice;
+	private final Recipient console = TestRecipient.console();
 	private final PlaceholderApiPlaceholders placeholders = new PlaceholderApiPlaceholders();
 
 	@Test

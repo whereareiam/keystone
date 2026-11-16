@@ -1,47 +1,41 @@
 package me.whereareiam.keystone.platform.bungeecord;
 
 import lombok.RequiredArgsConstructor;
-import me.whereareiam.keystone.common.platform.Platform;
-import me.whereareiam.keystone.common.platform.Sender;
+import me.whereareiam.keystone.Recipient;
+import me.whereareiam.keystone.common.Platform;
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.Duration;
-import java.util.Collection;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**
- * BungeeCord's senders, through adventure-platform-bungeecord, and its logger and scheduler.
+ * BungeeCord: senders reach players through adventure-platform, and later tasks run on the proxy's scheduler.
  */
 @RequiredArgsConstructor
-final class BungeePlatform implements Platform<CommandSender> {
+final class BungeePlatform implements Platform {
 	private final Plugin plugin;
 	private final BungeeAudiences audiences;
 
-	@Override
-	public @NotNull Sender sender(@NotNull CommandSender sender) {
-		return new BungeeSender(sender, audiences.sender(sender), sender == plugin.getProxy().getConsole());
+	/**
+	 * Returns the recipient of a command sender.
+	 *
+	 * @param sender the sender
+	 * @return its recipient
+	 */
+	@NotNull Recipient recipient(@NotNull CommandSender sender) {
+		return new BungeeRecipient(sender, audiences.sender(sender), sender == plugin.getProxy().getConsole());
+	}
+
+	@NotNull Plugin plugin() {
+		return plugin;
 	}
 
 	@Override
-	public @NotNull Sender console() {
-		return sender(plugin.getProxy().getConsole());
-	}
-
-	@Override
-	public @NotNull Collection<Sender> players() {
-		return plugin.getProxy().getPlayers().stream().map(player -> sender((CommandSender) player)).toList();
-	}
-
-	@Override
-	public @NotNull Optional<Sender> player(@NotNull UUID uniqueId) {
-		ProxiedPlayer player = plugin.getProxy().getPlayer(uniqueId);
-		return Optional.ofNullable(player).map(found -> sender((CommandSender) found));
+	public @NotNull Recipient console() {
+		return recipient(plugin.getProxy().getConsole());
 	}
 
 	@Override

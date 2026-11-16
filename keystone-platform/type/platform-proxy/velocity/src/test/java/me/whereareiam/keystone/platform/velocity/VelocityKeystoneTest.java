@@ -9,8 +9,8 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 import com.velocitypowered.api.scheduler.Scheduler;
+import me.whereareiam.keystone.Recipient;
 import me.whereareiam.keystone.common.fixture.TestSemantica;
-import me.whereareiam.keystone.common.platform.Sender;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
@@ -43,7 +43,7 @@ class VelocityKeystoneTest {
 		when(player.getUniqueId()).thenReturn(id);
 		when(player.getEffectiveLocale()).thenReturn(Locale.GERMAN);
 
-		Sender sender = platform.sender(player);
+		Recipient sender = new VelocityRecipient(player);
 
 		assertEquals("Alice", sender.name());
 		assertEquals(Optional.of(id), sender.uniqueId());
@@ -59,16 +59,11 @@ class VelocityKeystoneTest {
 
 		assertEquals("CONSOLE", platform.console().name());
 		assertTrue(platform.console().isConsole());
-		assertTrue(platform.sender(mock(CommandSource.class)).uniqueId().isEmpty());
+		assertTrue(new VelocityRecipient(mock(CommandSource.class)).uniqueId().isEmpty());
 	}
 
 	@Test
-	void findsPlayersLogsAndSchedules() {
-		Player player = mock(Player.class);
-		UUID id = UUID.randomUUID();
-		when(player.getUsername()).thenReturn("Alice");
-		when(server.getAllPlayers()).thenReturn(List.of(player));
-		when(server.getPlayer(id)).thenReturn(Optional.of(player));
+	void logsAndSchedules() {
 		Scheduler scheduler = mock(Scheduler.class);
 		Scheduler.TaskBuilder task = mock(Scheduler.TaskBuilder.class, RETURNS_SELF);
 		when(task.schedule()).thenReturn(mock(ScheduledTask.class));
@@ -80,8 +75,6 @@ class VelocityKeystoneTest {
 		platform.log("hello");
 		platform.later(Duration.ofSeconds(3), runnable);
 
-		assertEquals(List.of("Alice"), platform.players().stream().map(Sender::name).toList());
-		assertEquals("Alice", platform.player(id).orElseThrow().name());
 		verify(logger).info("hello");
 		verify(task).delay(Duration.ofSeconds(3));
 		verify(task).schedule();
@@ -98,7 +91,7 @@ class VelocityKeystoneTest {
 		when(description.getId()).thenReturn("papiproxybridge");
 		when(description.getName()).thenReturn(Optional.of("PAPIProxyBridge"));
 
-		VelocityKeystone.Builder builder = VelocityKeystone.builder(server, plugin, logger).semantica(TestSemantica.create());
+		VelocityKeystone.Builder<CommandSource> builder = VelocityKeystone.messenger(server, plugin, logger).semantica(TestSemantica.create());
 
 		assertTrue(builder.present("PAPIProxyBridge"));
 		assertFalse(builder.present("MiniPlaceholders"));

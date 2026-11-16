@@ -2,7 +2,7 @@ package me.whereareiam.keystone.integration.placeholderapi;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import me.whereareiam.keystone.Placeholders;
-import me.whereareiam.keystone.recipient.Recipient;
+import me.whereareiam.keystone.Recipient;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
