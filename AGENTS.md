@@ -52,8 +52,8 @@ keystone-integration/
 - `VERSION=<version> ./gradlew publishToMavenLocal` lets a plugin build against a local version.
 - Semantica comes from the registry, as a release or a development build (`dev-<commit>`); `gradle/libs.versions.toml`
   names it.
-- Intercept's API (`me.whereareiam.intercept:api`, version `dev`) comes from mavenLocal until Intercept publishes
-  it; build it from whereareiam/Intercept with `./gradlew publishToMavenLocal`.
+- Intercept's API (`me.whereareiam.intercept:api`) comes from the registry, as a release or a development build;
+  `gradle/libs.versions.toml` names it.
 - Paper's tests run on the Adventure of the Paper API they compile against (`adventure-paper`), since its types are
   built on it.
 
