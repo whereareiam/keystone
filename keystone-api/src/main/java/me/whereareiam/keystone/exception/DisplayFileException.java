@@ -8,7 +8,8 @@ import java.nio.file.Path;
 
 /**
  * The display file cannot be read: it is no valid YAML, or an entry is no valid display. When it happens on
- * {@link me.whereareiam.keystone.Keystone#reload()}, the displays read before stay in use.
+ * {@link me.whereareiam.keystone.Displays#reload()}, the displays read before stay in use; on
+ * {@link me.whereareiam.keystone.Displays#add(String, java.nio.file.Path)}, nothing changes.
  */
 @Getter
 public final class DisplayFileException extends RuntimeException {

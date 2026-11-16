@@ -1,6 +1,6 @@
 package me.whereareiam.keystone.platform.paper;
 
-import me.whereareiam.keystone.common.platform.Sender;
+import me.whereareiam.keystone.Recipient;
 import me.whereareiam.keystone.platform.bukkit.common.BukkitPlatform;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.Plugin;
@@ -10,7 +10,7 @@ import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Paper's senders and scheduler.
+ * Paper: senders are audiences themselves, and later tasks run on the asynchronous scheduler, which Folia has too.
  */
 final class PaperPlatform extends BukkitPlatform {
 	PaperPlatform(@NotNull Plugin plugin) {
@@ -18,8 +18,8 @@ final class PaperPlatform extends BukkitPlatform {
 	}
 
 	@Override
-	public @NotNull Sender sender(@NotNull CommandSender sender) {
-		return new PaperSender(sender);
+	public @NotNull Recipient recipient(@NotNull CommandSender sender) {
+		return new PaperRecipient(sender);
 	}
 
 	@Override

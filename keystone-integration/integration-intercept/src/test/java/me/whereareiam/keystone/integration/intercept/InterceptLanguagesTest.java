@@ -2,11 +2,9 @@ package me.whereareiam.keystone.integration.intercept;
 
 import me.whereareiam.intercept.InterceptAPI;
 import me.whereareiam.intercept.language.LanguageService;
-import me.whereareiam.keystone.common.fixture.TestKeystone;
-import me.whereareiam.keystone.common.fixture.TestPlatform;
-import me.whereareiam.keystone.common.fixture.TestSender;
+import me.whereareiam.keystone.Recipient;
+import me.whereareiam.keystone.common.fixture.TestRecipient;
 import me.whereareiam.keystone.common.integration.Installation;
-import me.whereareiam.keystone.recipient.Recipient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -21,10 +19,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class InterceptLanguagesTest {
-	private final TestSender alice = TestSender.player("Alice", Locale.ENGLISH);
-	private final TestPlatform platform = new TestPlatform();
-	private final Recipient player = TestKeystone.create(platform, null).recipients().of(alice);
-	private final Recipient console = TestKeystone.create(platform, null).console();
+	private final TestRecipient alice = TestRecipient.player("Alice", Locale.ENGLISH);
+	private final Recipient player = alice;
+	private final Recipient console = TestRecipient.console();
 	private final LanguageService service = mock(LanguageService.class);
 
 	@AfterEach

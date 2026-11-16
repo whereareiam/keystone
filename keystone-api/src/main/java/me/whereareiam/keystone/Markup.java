@@ -24,7 +24,7 @@ import java.util.function.Predicate;
  * A code the filter refuses stays exactly as typed. A code becomes a tag before the policy applies, so a filter
  * should accept only codes whose tags the policy allows.
  * <pre>{@code
- * Markup markup = keystone.markup(TagPolicy.of(TagPolicy.Group.COLOR))
+ * Markup markup = PaperKeystone.markup(TagPolicy.of(TagPolicy.Group.COLOR))
  *         .legacyCodes(code -> code instanceof LegacyCode.NamedColor);
  *
  * markup.read("&cHello <bold>world");   // red "Hello <bold>world"

@@ -1,6 +1,6 @@
 package me.whereareiam.keystone.platform.bukkit;
 
-import me.whereareiam.keystone.common.platform.Sender;
+import me.whereareiam.keystone.Recipient;
 import me.whereareiam.keystone.platform.bukkit.common.BukkitPlatform;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import org.bukkit.command.CommandSender;
@@ -10,7 +10,8 @@ import org.jetbrains.annotations.NotNull;
 import java.time.Duration;
 
 /**
- * Bukkit's senders, through adventure-platform-bukkit, and Bukkit's scheduler.
+ * Bukkit and Spigot: senders reach players through adventure-platform, and later tasks run on the main thread's
+ * scheduler, in whole ticks.
  */
 final class BukkitAudiencePlatform extends BukkitPlatform {
 	private static final long TICK_MILLIS = 50;
@@ -23,8 +24,8 @@ final class BukkitAudiencePlatform extends BukkitPlatform {
 	}
 
 	@Override
-	public @NotNull Sender sender(@NotNull CommandSender sender) {
-		return new BukkitSender(sender, audiences.sender(sender));
+	public @NotNull Recipient recipient(@NotNull CommandSender sender) {
+		return new BukkitRecipient(sender, audiences.sender(sender));
 	}
 
 	@Override

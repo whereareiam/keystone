@@ -1,15 +1,10 @@
 package me.whereareiam.keystone.integration.miniplaceholders;
 
-import me.whereareiam.keystone.common.fixture.TestKeystone;
-import me.whereareiam.keystone.common.fixture.TestPlatform;
-import me.whereareiam.keystone.common.fixture.TestSender;
 import me.whereareiam.keystone.common.integration.Installation;
-import me.whereareiam.keystone.recipient.Recipient;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.junit.jupiter.api.Test;
 
-import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -19,7 +14,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 class MiniPlaceholdersTagsTest {
-	private final Recipient player = TestKeystone.create(new TestPlatform(), null).recipients().of(TestSender.player("Alice", Locale.ENGLISH));
 
 	@Test
 	void asksForTheGlobalTagsForEachText() {
@@ -30,8 +24,8 @@ class MiniPlaceholdersTagsTest {
 			return online;
 		});
 
-		assertSame(online, tags.resolver(player));
-		tags.resolver(player);
+		assertSame(online, tags.resolver());
+		tags.resolver();
 		assertEquals(2, asked.get());
 	}
 

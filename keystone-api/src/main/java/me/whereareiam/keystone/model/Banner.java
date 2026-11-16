@@ -5,7 +5,10 @@ import lombok.Getter;
 import me.whereareiam.semantica.Content;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -15,18 +18,19 @@ import java.util.Objects;
  * Banner banner = Banner.of(
  *                 Content.of("<gold>  █▀ █▀▀   <white>Socialismus v<gray>{version}"),
  *                 Content.of("<gold>  ▄█ █▄▄   <white>Platform: <gray>{platform}"))
- *         .values(Values.of("version", version).and("platform", "Paper"));
+ *         .with("version", version)
+ *         .with("platform", "Paper");
  *
- * keystone.console().print(banner);
+ * messenger.print(banner);
  * }</pre>
  */
 @Getter
 @EqualsAndHashCode
 public final class Banner {
 	private final List<Content> lines;
-	private final Values values;
+	private final Map<String, Object> values;
 
-	private Banner(List<Content> lines, Values values) {
+	private Banner(List<Content> lines, Map<String, Object> values) {
 		this.lines = lines;
 		this.values = values;
 	}
@@ -48,16 +52,20 @@ public final class Banner {
 	 * @return the banner, with no values
 	 */
 	public static @NotNull Banner of(@NotNull List<Content> lines) {
-		return new Banner(List.copyOf(lines), Values.none());
+		return new Banner(List.copyOf(lines), Map.of());
 	}
 
 	/**
-	 * Returns this banner with the values its lines see.
+	 * Returns this banner with one more value its lines see, replacing a value of the same name.
 	 *
-	 * @param values the values
+	 * @param name  the value's name, as the lines write it: {@code {version}}
+	 * @param value the value
 	 * @return a new banner
 	 */
-	public @NotNull Banner values(@NotNull Values values) {
-		return new Banner(lines, Objects.requireNonNull(values, "values"));
+	public @NotNull Banner with(@NotNull String name, @NotNull Object value) {
+		Map<String, Object> copy = new LinkedHashMap<>(values);
+		copy.put(Objects.requireNonNull(name, "name"), Objects.requireNonNull(value, "value"));
+
+		return new Banner(lines, Collections.unmodifiableMap(copy));
 	}
 }

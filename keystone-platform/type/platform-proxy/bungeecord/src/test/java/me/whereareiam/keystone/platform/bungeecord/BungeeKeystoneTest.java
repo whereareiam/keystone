@@ -1,7 +1,7 @@
 package me.whereareiam.keystone.platform.bungeecord;
 
+import me.whereareiam.keystone.Recipient;
 import me.whereareiam.keystone.common.fixture.RecordingAudience;
-import me.whereareiam.keystone.common.platform.Sender;
 import net.kyori.adventure.platform.bungeecord.BungeeAudiences;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
@@ -49,7 +49,7 @@ class BungeeKeystoneTest {
 		when(player.getLocale()).thenReturn(Locale.GERMAN);
 		when(audiences.sender(player)).thenReturn(audience);
 
-		Sender sender = platform.sender(player);
+		Recipient sender = platform.recipient(player);
 
 		assertEquals("Alice", sender.name());
 		assertEquals(Optional.of(id), sender.uniqueId());
@@ -65,12 +65,7 @@ class BungeeKeystoneTest {
 	}
 
 	@Test
-	void findsPlayersLogsAndSchedules() {
-		ProxiedPlayer player = mock(ProxiedPlayer.class);
-		UUID id = UUID.randomUUID();
-		when(player.getName()).thenReturn("Alice");
-		when(proxy.getPlayers()).thenReturn(List.of(player));
-		when(proxy.getPlayer(id)).thenReturn(player);
+	void logsAndSchedules() {
 		TaskScheduler scheduler = mock(TaskScheduler.class);
 		when(proxy.getScheduler()).thenReturn(scheduler);
 		java.util.logging.Logger logger = mock(java.util.logging.Logger.class);
@@ -81,9 +76,6 @@ class BungeeKeystoneTest {
 		platform.log("hello");
 		platform.later(Duration.ofSeconds(1), task);
 
-		assertEquals(List.of("Alice"), platform.players().stream().map(Sender::name).toList());
-		assertEquals("Alice", platform.player(id).orElseThrow().name());
-		assertTrue(platform.player(UUID.randomUUID()).isEmpty());
 		verify(logger).info("hello");
 		verify(scheduler).schedule(plugin, task, 1000L, TimeUnit.MILLISECONDS);
 	}
@@ -98,7 +90,7 @@ class BungeeKeystoneTest {
 		when(manager.getPlugins()).thenReturn(List.of(bridge));
 		when(bridge.getDescription()).thenReturn(description);
 
-		BungeeKeystone.Builder builder = BungeeKeystone.builder(plugin, audiences);
+		BungeeKeystone.Builder<CommandSender> builder = BungeeKeystone.messenger(plugin, audiences);
 
 		assertTrue(builder.present("papiproxybridge"));
 		assertFalse(builder.present("Intercept"));

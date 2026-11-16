@@ -2,7 +2,6 @@ package me.whereareiam.keystone.integration.miniplaceholders;
 
 import lombok.RequiredArgsConstructor;
 import me.whereareiam.keystone.Placeholders;
-import me.whereareiam.keystone.recipient.Recipient;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +15,7 @@ final class MiniPlaceholdersTags implements Placeholders.Tags {
 	private final Supplier<TagResolver> global;
 
 	@Override
-	public @NotNull TagResolver resolver(@NotNull Recipient recipient) {
+	public @NotNull TagResolver resolver() {
 		return global.get();
 	}
 }

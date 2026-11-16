@@ -26,7 +26,7 @@ class BukkitAudiencePlatformTest {
 		RecordingAudience audience = new RecordingAudience();
 		when(audiences.sender(player)).thenReturn(audience);
 
-		assertSame(audience, platform.sender(player).audience());
+		assertSame(audience, platform.recipient(player).audience());
 	}
 
 	@Test

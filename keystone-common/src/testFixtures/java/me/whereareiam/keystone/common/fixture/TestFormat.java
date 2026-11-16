@@ -17,7 +17,7 @@ import java.util.function.UnaryOperator;
 /**
  * Semantica's format for Adventure 5, as Paper and Velocity use it.
  */
-public final class TestFormat implements AdventureFormat {
+public class TestFormat implements AdventureFormat {
 	@Override
 	public @NotNull Component render(
 			@NotNull TagPolicy policy,
