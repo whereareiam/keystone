@@ -66,7 +66,7 @@ bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bunge
 placeholderapi = { group = "me.clip", name = "placeholderapi", version.ref = "placeholderapi" }
 papiproxybridge = { group = "net.william278", name = "papiproxybridge", version.ref = "papiproxybridge" }
 miniplaceholders = { group = "io.github.miniplaceholders", name = "miniplaceholders-api", version.ref = "miniplaceholders" }
-intercept-api = { group = "me.whereareiam.intercept", name = "intercept-api", version.ref = "intercept" }
+intercept-api = { group = "me.whereareiam.intercept", name = "api", version.ref = "intercept" }
 
 [bundles]
 adventure = ["adventure-api", "adventure-minimessage"]
