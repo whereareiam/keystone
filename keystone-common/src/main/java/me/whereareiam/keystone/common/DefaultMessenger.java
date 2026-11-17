@@ -91,7 +91,8 @@ public final class DefaultMessenger<S> implements Messenger<S> {
 		recipient(sender).uniqueId().ifPresent(holding::discard);
 	}
 
-	private Recipient recipient(S sender) {
+	@Override
+	public @NotNull Recipient recipient(@NotNull S sender) {
 		return Objects.requireNonNull(recipients.apply(Objects.requireNonNull(sender, "sender")), "recipient");
 	}
 

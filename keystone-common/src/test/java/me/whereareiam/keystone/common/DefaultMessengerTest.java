@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DefaultMessengerTest {
@@ -68,6 +69,17 @@ class DefaultMessengerTest {
 		messenger.send(player, Message.of("greeting").with("player", "Carol"));
 
 		assertEquals(List.of("chat: Hello, Carol!"), player.audience().shown());
+	}
+
+	@Test
+	void handsOutTheRecipientOfASender() {
+		Messenger<Player> messenger = new DefaultMessenger<>(platform, Player::recipient, TestMessenger.options());
+		Player player = new Player("Carol", new RecordingAudience());
+
+		Recipient recipient = messenger.recipient(player);
+
+		assertEquals("Carol", recipient.name());
+		assertSame(player.audience(), recipient.audience());
 	}
 
 	@Test
