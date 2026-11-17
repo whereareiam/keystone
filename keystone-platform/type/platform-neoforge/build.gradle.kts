@@ -48,7 +48,7 @@ configurations.configureEach {
 // It refers to Minecraft's classes: NeoForge loads it in the game's layer, also when a mod nests it.
 tasks.jar {
     manifest {
-        attributes("FMLModType" to "GAMELIBRARY", "Automatic-Module-Name" to "me.whereareiam.keystone.platform.neoforge")
+        attributes("FMLModType" to "GAMELIBRARY")
     }
 }
 
