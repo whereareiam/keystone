@@ -5,7 +5,7 @@ Keystone delivers the texts of a Minecraft plugin. A plugin declares its texts w
 group, in that recipient's language, with the placeholders of that recipient, as the chat line, action bar, title,
 boss bar or sound the server's admins chose.
 
-It runs on Paper, Bukkit and Spigot, Velocity and BungeeCord, with Java 21.
+It runs on Paper, Bukkit and Spigot, Velocity and BungeeCord, and NeoForge 1.21.1 servers, with Java 21.
 
 ## Installation
 
@@ -20,12 +20,19 @@ dependencies {
     // implementation("me.whereareiam:keystone-platform-bukkit-bukkit:<version>")
     // implementation("me.whereareiam:keystone-platform-proxy-velocity:<version>")
     // implementation("me.whereareiam:keystone-platform-proxy-bungeecord:<version>")
+    // implementation("me.whereareiam:keystone-platform-neoforge:<version>")
 }
 ```
 
 Shade Keystone into the plugin and relocate it. On Bukkit and BungeeCord, shade and relocate Adventure as well:
 those platforms reach players through adventure-platform, and a relocated Adventure never meets one another plugin
 or the server ships.
+
+On NeoForge, the mod nests adventure-platform-neoforge (a mod of its own) and Keystone's NeoForge platform, Adventure
+and Semantica as jars in jar, unrelocated: adventure-platform-neoforge 6.0.1 nests Adventure 4.17, Semantica's format
+needs 4.25 or later, and NeoForge loads the highest version any mod nests, so it runs on the Adventure Keystone brings.
+Keystone's NeoForge jar is a game library (`FMLModType: GAMELIBRARY`), loaded where it sees Minecraft. Minecraft 1.21.1
+ships an older ICU4J than Semantica's, so the mod nests Semantica's ICU4J too.
 
 ## Send a text
 
@@ -75,8 +82,28 @@ Each platform has its own entry class:
 | Bukkit, Spigot | `BukkitKeystone.messenger(plugin, audiences)` with the plugin's `BukkitAudiences` | `CommandSender` |
 | Velocity | `VelocityKeystone.messenger(server, plugin, logger)` | `CommandSource` |
 | BungeeCord | `BungeeKeystone.messenger(plugin, audiences)` with the plugin's `BungeeAudiences` | `CommandSender` |
+| NeoForge | `NeoForgeKeystone.messenger(server, logger)` | `CommandSourceStack` |
 
 On Bukkit and BungeeCord the plugin creates its audiences when it enables and closes them when it disables.
+
+On NeoForge a messenger belongs to one server: the mod builds it when the server starts and drops it when the server
+stops, since a client starts a new server for each world it opens. A player is reached through their command source:
+
+```java
+@SubscribeEvent
+void starting(ServerStartingEvent event) {
+	messenger = NeoForgeKeystone.messenger(event.getServer(), LOGGER)
+			.semantica(semantica)
+			.build();
+}
+
+messenger.send(context.getSource(), messages.reloaded());
+messenger.send(player.createCommandSourceStack(), messages.welcome(player.getScoreboardName()));
+```
+
+A library that works with the plugin's senders, such as a command framework that keeps cooldowns per player, asks the
+messenger how it sees one: `messenger.recipient(sender)` returns the sender's name, unique id, client language and
+whether it is the console.
 
 ### A plugin's own player type
 

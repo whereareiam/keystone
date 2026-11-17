@@ -25,6 +25,8 @@ keystone-platform/
     platform-proxy/
       velocity/               Velocity's own Adventure, Adventure 5 format  :platform-proxy-velocity
       bungeecord/             adventure-platform-bungeecord, Adventure 4    :platform-proxy-bungeecord
+    platform-neoforge/        adventure-platform-neoforge, Adventure 4      :platform-neoforge
+                              (ModDevGradle, NeoForge 1.21.1)
 keystone-integration/
   integration-placeholderapi/   text placeholders, Bukkit and Paper        :integration-placeholderapi
   integration-papiproxybridge/  text placeholders, proxies                 :integration-papiproxybridge
@@ -35,9 +37,10 @@ keystone-integration/
 - `keystone-api` is what plugins compile against: `Messenger`, `Recipient`, `Displays`, `Markup`, `Placeholders`,
   `LanguageResolver`, `model/` (`Display`, `Banner`), `type/` (`LegacyCode`, and the sealed `Part`s in
   `type/part/`) and `exception/`. Public API: every change is compatibility-sensitive and needs complete Javadocs.
-- A platform's entry class (`PaperKeystone`, `BukkitKeystone`, `VelocityKeystone`, `BungeeKeystone`) starts a
-  messenger over the platform's senders or, given a function that returns a `Recipient`, over the plugin's own
-  sender type, and hands out `markup(policy)`. Keystone never picks recipients: the plugin passes them.
+- A platform's entry class (`PaperKeystone`, `BukkitKeystone`, `VelocityKeystone`, `BungeeKeystone`,
+  `NeoForgeKeystone`) starts a messenger over the platform's senders or, given a function that returns a
+  `Recipient`, over the plugin's own sender type, and hands out `markup(policy)`. Keystone never picks recipients:
+  the plugin passes them; `Messenger#recipient(sender)` tells libraries, such as Commandant, how it sees one.
 - `keystone-common` holds the logic; a platform only adapts it through `Platform` (console, log, later tasks) and
   its `Recipient`s, and picks Semantica's Adventure format through `render/AdventureFormat`. A display is read
   through classes Jackson binds (`configura/DisplayDocument` and its parts), never by walking nodes by hand. Its
@@ -49,6 +52,11 @@ keystone-integration/
   other plugin's types; the class it installs does. The builder installs it only when the platform reports the
   plugin. No reflection: presence comes from the platform's plugin manager.
 - A new platform joins the group it shares code with; a group gets its `common/` once two members share something.
+- The NeoForge platform compiles against Minecraft through ModDevGradle, whose settings plugin puts the repositories
+  of Minecraft and NeoForge in `settings.gradle.kts`. Its jar is a game library (`FMLModType: GAMELIBRARY`); its tests
+  run inside NeoForge (`unitTest`), as the test mod `keystone_test`, so that Minecraft's types initialise, and mock
+  adventure-platform's audiences. Its Adventure is 4.26.1 (`adventure-neoforge`): Semantica's format for Adventure 4
+  needs 4.25, above the 4.17 adventure-platform-neoforge 6.0.1 nests.
 - Artifacts are published as `me.whereareiam:keystone-<project>`, such as `keystone-api` or
   `keystone-platform-bukkit-paper`.
 

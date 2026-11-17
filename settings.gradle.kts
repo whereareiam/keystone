@@ -12,6 +12,12 @@ pluginManagement {
     }
 }
 
+// The repositories of Minecraft and NeoForge, which the NeoForge platform compiles against; declared here because
+// the settings' repositories are preferred over a project's.
+plugins {
+    id("net.neoforged.moddev.repositories") version "2.0.148"
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
 
@@ -23,6 +29,7 @@ dependencyResolutionManagement {
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://repo.extendedclip.com/releases/")
         maven("https://repo.william278.net/releases/")
+        maven("https://maven.neoforged.net/releases/")
     }
 }
 
@@ -49,6 +56,9 @@ project(":platform-proxy-velocity").projectDir = file("keystone-platform/type/pl
 
 include(":platform-proxy-bungeecord")
 project(":platform-proxy-bungeecord").projectDir = file("keystone-platform/type/platform-proxy/bungeecord")
+
+include(":platform-neoforge")
+project(":platform-neoforge").projectDir = file("keystone-platform/type/platform-neoforge")
 
 include(":integration-placeholderapi")
 project(":integration-placeholderapi").projectDir = file("keystone-integration/integration-placeholderapi")
