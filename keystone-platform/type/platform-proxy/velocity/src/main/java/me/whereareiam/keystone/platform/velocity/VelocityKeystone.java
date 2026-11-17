@@ -69,7 +69,7 @@ public final class VelocityKeystone {
 				Objects.requireNonNull(logger, "logger")
 		);
 
-		return new Builder<>(server, platform, recipients);
+		return new Builder<>(server, platform, Objects.requireNonNull(recipients, "recipients"));
 	}
 
 	/**

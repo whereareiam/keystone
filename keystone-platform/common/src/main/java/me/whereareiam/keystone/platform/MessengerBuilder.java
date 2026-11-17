@@ -1,5 +1,7 @@
 package me.whereareiam.keystone.platform;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import me.whereareiam.keystone.LanguageResolver;
 import me.whereareiam.keystone.Messenger;
 import me.whereareiam.keystone.Placeholders;
@@ -39,6 +41,7 @@ import java.util.function.Predicate;
  * @param <S> the plugin's sender type
  * @param <B> the platform's builder
  */
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class MessengerBuilder<S, B extends MessengerBuilder<S, B>> {
 	private final Function<? super S, ? extends Recipient> recipients;
 	private final Set<Class<? extends Integration>> disabled = new HashSet<>();
@@ -47,15 +50,6 @@ public abstract class MessengerBuilder<S, B extends MessengerBuilder<S, B>> {
 	private @Nullable Semantica semantica;
 	private TagPolicy policy = TagPolicy.defaults();
 	private Predicate<Recipient> hold = recipient -> false;
-
-	/**
-	 * Creates the builder.
-	 *
-	 * @param recipients returns the recipient of each of the plugin's senders
-	 */
-	protected MessengerBuilder(@NotNull Function<? super S, ? extends Recipient> recipients) {
-		this.recipients = Objects.requireNonNull(recipients, "recipients");
-	}
 
 	/**
 	 * Sets the Semantica that resolves the texts; required.

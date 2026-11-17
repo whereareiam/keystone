@@ -1,7 +1,9 @@
 package me.whereareiam.keystone.model;
 
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import me.whereareiam.keystone.type.part.Chat;
 import me.whereareiam.keystone.type.part.Part;
@@ -37,16 +39,12 @@ import java.util.Objects;
 @Getter
 @ToString
 @EqualsAndHashCode
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Display {
 	private static final Display NONE = new Display(List.of(), Map.of());
 
 	private final List<Part> parts;
 	private final Map<String, Object> values;
-
-	private Display(List<Part> parts, Map<String, Object> values) {
-		this.parts = parts;
-		this.values = values;
-	}
 
 	/**
 	 * Returns a display that shows nothing.
