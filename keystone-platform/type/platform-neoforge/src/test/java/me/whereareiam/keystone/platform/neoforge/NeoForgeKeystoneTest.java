@@ -25,6 +25,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -37,7 +38,7 @@ class NeoForgeKeystoneTest {
 	private final MinecraftServer server = mock(MinecraftServer.class);
 	private final MinecraftServerAudiences audiences = mock(MinecraftServerAudiences.class);
 	private final Logger logger = mock(Logger.class);
-	private final NeoForgePlatform platform = new NeoForgePlatform(server, audiences, logger);
+	private final NeoForgePlatform platform = new NeoForgePlatform(() -> server, running -> audiences, logger);
 
 	@Test
 	void aPlayerHasTheirIdTheirClientsLanguageAndTheirAudience() {
@@ -86,6 +87,15 @@ class NeoForgeKeystoneTest {
 		assertFalse(recipient.isConsole());
 		assertTrue(recipient.uniqueId().isEmpty());
 		assertTrue(recipient.clientLanguage().isEmpty());
+	}
+
+	@Test
+	void hasNoConsoleAndRunsNothingLaterWhileNoServerRuns() {
+		NeoForgePlatform stopped = new NeoForgePlatform(() -> null, running -> audiences, logger);
+
+		assertThrows(IllegalStateException.class, stopped::console);
+		assertThrows(IllegalStateException.class, () -> stopped.later(Duration.ZERO, () -> {
+		}));
 	}
 
 	@Test

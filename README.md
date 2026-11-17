@@ -82,17 +82,17 @@ Each platform has its own entry class:
 | Bukkit, Spigot | `BukkitKeystone.messenger(plugin, audiences)` with the plugin's `BukkitAudiences` | `CommandSender` |
 | Velocity | `VelocityKeystone.messenger(server, plugin, logger)` | `CommandSource` |
 | BungeeCord | `BungeeKeystone.messenger(plugin, audiences)` with the plugin's `BungeeAudiences` | `CommandSender` |
-| NeoForge | `NeoForgeKeystone.messenger(server, logger)` | `CommandSourceStack` |
+| NeoForge | `NeoForgeKeystone.messenger(logger)` | `CommandSourceStack` |
 
 On Bukkit and BungeeCord the plugin creates its audiences when it enables and closes them when it disables.
 
-On NeoForge a messenger belongs to one server: the mod builds it when the server starts and drops it when the server
-stops, since a client starts a new server for each world it opens. A player is reached through their command source:
+On NeoForge a messenger lives as long as the mod, like Cloud's command manager: the mod builds it when it is
+constructed, and it sends while a server runs, to that server's command sources and console. A player is reached
+through their command source:
 
 ```java
-@SubscribeEvent
-void starting(ServerStartingEvent event) {
-	messenger = NeoForgeKeystone.messenger(event.getServer(), LOGGER)
+public MyMod(IEventBus bus) {
+	messenger = NeoForgeKeystone.messenger(LOGGER)
 			.semantica(semantica)
 			.build();
 }
