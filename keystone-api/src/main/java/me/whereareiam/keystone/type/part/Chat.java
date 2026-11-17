@@ -1,7 +1,9 @@
 package me.whereareiam.keystone.type.part;
 
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import me.whereareiam.semantica.Content;
 import org.jetbrains.annotations.NotNull;
@@ -17,12 +19,9 @@ import java.util.Objects;
 @Getter
 @ToString
 @EqualsAndHashCode
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Chat implements Part {
 	private final Content text;
-
-	private Chat(Content text) {
-		this.text = text;
-	}
 
 	/**
 	 * Returns the part.

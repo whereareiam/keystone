@@ -57,7 +57,8 @@ public final class PaperKeystone {
 	 * @return the builder
 	 */
 	public static <S> @NotNull Builder<S> messenger(@NotNull Plugin plugin, @NotNull Function<? super S, ? extends Recipient> recipients) {
-		return new Builder<>(new PaperPlatform(Objects.requireNonNull(plugin, "plugin")), recipients);
+		PaperPlatform platform = new PaperPlatform(Objects.requireNonNull(plugin, "plugin"));
+		return new Builder<>(platform, Objects.requireNonNull(recipients, "recipients"));
 	}
 
 	/**

@@ -1,5 +1,7 @@
 package me.whereareiam.keystone.platform;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import me.whereareiam.keystone.Placeholders;
 import me.whereareiam.keystone.common.integration.Integration;
 import org.jetbrains.annotations.NotNull;
@@ -18,13 +20,10 @@ import java.util.Set;
  *         .add(groupPlaceholders))
  * }</pre>
  */
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class PlaceholderOptions {
 	private final List<Placeholders> added = new ArrayList<>();
 	private final Set<Class<? extends Integration>> disabled;
-
-	PlaceholderOptions(@NotNull Set<Class<? extends Integration>> disabled) {
-		this.disabled = disabled;
-	}
 
 	/**
 	 * Adds placeholders of the plugin's own, filled after those of the integrations.

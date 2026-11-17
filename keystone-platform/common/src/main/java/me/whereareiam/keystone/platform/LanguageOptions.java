@@ -1,5 +1,7 @@
 package me.whereareiam.keystone.platform;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import me.whereareiam.keystone.LanguageResolver;
 import me.whereareiam.keystone.common.integration.Integration;
 import org.jetbrains.annotations.NotNull;
@@ -20,14 +22,11 @@ import java.util.Set;
  *         .resolver(recipient -> recipient.uniqueId().flatMap(storedLanguages::get)))
  * }</pre>
  */
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class LanguageOptions {
 	private final List<LanguageResolver> resolvers = new ArrayList<>();
 	private final Set<Class<? extends Integration>> disabled;
 	private @Nullable Locale fallback;
-
-	LanguageOptions(@NotNull Set<Class<? extends Integration>> disabled) {
-		this.disabled = disabled;
-	}
 
 	/**
 	 * Sets the language after every other, which is also the console's.

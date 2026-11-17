@@ -1,7 +1,9 @@
 package me.whereareiam.keystone.model;
 
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import me.whereareiam.semantica.Content;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,14 +28,10 @@ import java.util.Objects;
  */
 @Getter
 @EqualsAndHashCode
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Banner {
 	private final List<Content> lines;
 	private final Map<String, Object> values;
-
-	private Banner(List<Content> lines, Map<String, Object> values) {
-		this.lines = lines;
-		this.values = values;
-	}
 
 	/**
 	 * Returns a banner of lines.

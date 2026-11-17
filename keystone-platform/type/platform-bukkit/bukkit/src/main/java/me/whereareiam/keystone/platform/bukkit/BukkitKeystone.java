@@ -61,7 +61,7 @@ public final class BukkitKeystone {
 			@NotNull BukkitAudiences audiences,
 			@NotNull Function<? super S, ? extends Recipient> recipients
 	) {
-		return new Builder<>(platform(plugin, audiences), recipients);
+		return new Builder<>(platform(plugin, audiences), Objects.requireNonNull(recipients, "recipients"));
 	}
 
 	/**

@@ -60,7 +60,7 @@ public final class BungeeKeystone {
 			@NotNull BungeeAudiences audiences,
 			@NotNull Function<? super S, ? extends Recipient> recipients
 	) {
-		return new Builder<>(platform(plugin, audiences), recipients);
+		return new Builder<>(platform(plugin, audiences), Objects.requireNonNull(recipients, "recipients"));
 	}
 
 	/**
