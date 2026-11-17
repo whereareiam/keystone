@@ -1,20 +1,18 @@
 ---
-version: 1.0.0
+version: 2.0.0
 ---
 
-# Keystone 1.0.0 - Stable messages
+# Keystone 2.0.0 - Delivery
 
-Keystone 1.0.0 is the first stable release: actors, the serializer engine, decorators and placeholders keep their API from here on. It adds string templates, configurable placeholder formats and scoped decorators; plugins written against 0.0.1 need the upgrade steps below.
-
-## Highlights
-
-* Templates: `TemplateEngine` renders a message through decorators and placeholders to a string without turning it into a component; `MessageTemplate` and `StreamMessageTemplate` render one template or one line per stream item, with placeholders and `TemplateSection`s.
-* Placeholders: the placeholder format is configurable through `SerializerOptions.placeholderFormat`, with `{name}`, `%name%`, `$name` or a custom format.
-* Decorators: decorators can be registered for a scope with `Serializers.registerScopedDecorator`; a message may name its scope.
-* MiniMessage: with legacy input enabled, legacy `&` and `§` codes are applied inside MiniMessage text instead of the whole message being parsed as legacy text.
+Keystone 2.0.0 is rebuilt on Semantica: it sends a plugin's translated messages and the texts admins write in configs to each recipient in their own language, the one they chose in Intercept or their client's, as chat, action bar, title, boss bar or sound, with PlaceholderAPI, PAPIProxyBridge and MiniPlaceholders filled in. It runs on Paper, Bukkit, Velocity and BungeeCord and needs Java 21.
 
 ## Upgrading
 
-* `Player` was removed; implement `Actor` instead. The `playerName` placeholder is filled for every receiver, not only a `Player`.
-* Placeholder keys are names without their format: `addPlaceholder("coins", ...)` instead of `"{coins}"`.
-* `PlayerNameDecorator` and `PrefixDecorator` moved to `me.whereareiam.keystone.decorator` in `keystone`.
+* Keystone 2.0.0 replaces the API of 1.x; nothing of it remains. `Actor`, `Serializers`, the serializer engine, its adapters, decorators, templates, the prefix and scopes are gone.
+* Depend on the platform's artifact, such as `keystone-platform-bukkit-paper`, and build a messenger with its entry class: `PaperKeystone.messenger(plugin).semantica(semantica).build()`. A plugin with its own player type passes a function that returns a `Recipient` for it.
+* Declare texts with Semantica 0.2's `@Messages` and send them with `messenger.send(sender, messages.text(...))`, or to many with `messenger.send(players, ...)`; the plugin picks the recipients. A config's `Display` is sent with `messenger.send(sender, display.with("player", name))`.
+* Display files are added by owner, `messenger.displays().add("myplugin", path)`, so modules add and remove their own.
+* `{prefix}` and other shared parts are references to translated messages, such as `{@messages.prefix}`.
+* Placeholders are filled in what translators and admins wrote only, never in values such as a player's chat message.
+* Legacy codes are read only in player text, through `PaperKeystone.markup(policy).legacyCodes(...)`.
+* Java 21 is required. Bukkit plugins that run on older servers downgrade their shaded jar.
