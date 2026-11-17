@@ -12,6 +12,7 @@ import me.whereareiam.keystone.type.part.Chat;
 import me.whereareiam.keystone.type.part.Part;
 import me.whereareiam.keystone.type.part.Sound;
 import me.whereareiam.keystone.type.part.Title;
+import me.whereareiam.semantica.Value;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.NotNull;
@@ -64,11 +65,11 @@ public final class Delivery {
 	public void show(@NotNull List<Recipient> recipients, @NotNull Display display) {
 		if (recipients.isEmpty()) return;
 
-		Map<String, Object> values = display.getValues();
+		Map<String, Value> values = display.getValues();
 		for (Part part : display.getParts()) show(recipients, part, values);
 	}
 
-	private void show(List<Recipient> recipients, Part part, Map<String, Object> values) {
+	private void show(List<Recipient> recipients, Part part, Map<String, Value> values) {
 		switch (part) {
 			case Chat chat -> each(recipients, renderer.render(chat.getText(), values, recipients), Audience::sendMessage);
 			case ActionBar bar -> each(recipients, renderer.render(bar.getText(), values, recipients), Audience::sendActionBar);
@@ -86,7 +87,7 @@ public final class Delivery {
 		}
 	}
 
-	private void showTitles(List<Recipient> recipients, Title title, Map<String, Object> values) {
+	private void showTitles(List<Recipient> recipients, Title title, Map<String, Value> values) {
 		List<Component> titles = renderer.render(title.getTitle(), values, recipients);
 		List<Component> subtitles = renderer.render(title.getSubtitle(), values, recipients);
 		net.kyori.adventure.title.Title.Times times = net.kyori.adventure.title.Title.Times.times(title.getFadeIn(), title.getStay(), title.getFadeOut());
@@ -95,7 +96,7 @@ public final class Delivery {
 			recipients.get(index).audience().showTitle(net.kyori.adventure.title.Title.title(titles.get(index), subtitles.get(index), times));
 	}
 
-	private void showBossBars(List<Recipient> recipients, BossBar bar, Map<String, Object> values) {
+	private void showBossBars(List<Recipient> recipients, BossBar bar, Map<String, Value> values) {
 		List<Component> texts = renderer.render(bar.getText(), values, recipients);
 		Map<Component, net.kyori.adventure.bossbar.BossBar> bars = new HashMap<>();
 		List<Runnable> hides = new ArrayList<>(recipients.size());

@@ -4,6 +4,7 @@ import me.whereareiam.keystone.Placeholders;
 import me.whereareiam.keystone.Recipient;
 import me.whereareiam.keystone.common.MessengerOptions;
 import me.whereareiam.semantica.Content;
+import me.whereareiam.semantica.Value;
 import me.whereareiam.semantica.common.Semantica;
 import me.whereareiam.semantica.format.adventure.TagPolicy;
 import me.whereareiam.semantica.message.ResolvedMessage;
@@ -61,7 +62,7 @@ public final class TextRenderer {
 	 * @param recipients the recipients
 	 * @return the component of each recipient, in the recipients' order
 	 */
-	public @NotNull List<Component> render(@NotNull Content content, @NotNull Map<String, ?> values, @NotNull List<Recipient> recipients) {
+	public @NotNull List<Component> render(@NotNull Content content, @NotNull Map<String, ? extends Value> values, @NotNull List<Recipient> recipients) {
 		List<TagResolver> resolvers = tags.stream().map(Placeholders.Tags::resolver).toList();
 		Map<List<Locale>, ResolvedMessage> resolved = new HashMap<>();
 		Map<ResolvedMessage, Component> rendered = new HashMap<>();
@@ -84,7 +85,7 @@ public final class TextRenderer {
 	 * @param recipient the recipient
 	 * @return the component
 	 */
-	public @NotNull Component render(@NotNull Content content, @NotNull Map<String, ?> values, @NotNull Recipient recipient) {
+	public @NotNull Component render(@NotNull Content content, @NotNull Map<String, ? extends Value> values, @NotNull Recipient recipient) {
 		return render(content, values, List.of(recipient)).getFirst();
 	}
 

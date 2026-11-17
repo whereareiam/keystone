@@ -13,6 +13,7 @@ import me.whereareiam.keystone.type.part.Part;
 import me.whereareiam.keystone.type.part.Sound;
 import me.whereareiam.keystone.type.part.Title;
 import me.whereareiam.semantica.Content;
+import me.whereareiam.semantica.Value;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -34,7 +35,7 @@ public final class ConsoleWriter {
 	 * @param display the display with its values
 	 */
 	public void write(@NotNull Recipient console, @NotNull Display display) {
-		Map<String, Object> values = display.getValues();
+		Map<String, Value> values = display.getValues();
 		for (Part part : display.getParts()) {
 			switch (part) {
 				case Chat chat -> write(console, chat.getText(), values);
@@ -63,7 +64,7 @@ public final class ConsoleWriter {
 		platform.log("");
 	}
 
-	private void write(Recipient console, Content content, Map<String, Object> values) {
+	private void write(Recipient console, Content content, Map<String, Value> values) {
 		String text = ansi.serialize(renderer.render(content, values, console));
 		for (String line : text.split("\n", -1)) platform.log(line);
 	}
