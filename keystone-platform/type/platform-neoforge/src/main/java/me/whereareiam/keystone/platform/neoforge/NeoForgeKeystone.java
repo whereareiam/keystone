@@ -13,8 +13,8 @@ import me.whereareiam.keystone.platform.format.AdventureV4Format;
 import me.whereareiam.semantica.format.adventure.TagPolicy;
 import net.kyori.adventure.platform.modcommon.MinecraftServerAudiences;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.MinecraftServer;
 import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -27,12 +27,11 @@ import java.util.function.Function;
  * adventure-platform-neoforge, which the mod ships as a nested jar together with the Adventure this module brings;
  * a player's client language is the one their client reports, and the console's lines go to the mod's logger.
  * <p>
- * A messenger belongs to one server: the mod builds it when the server starts and drops it when the server stops,
- * since a client starts a new server for every world it opens.
+ * A messenger lives as long as the mod, like Cloud's command manager: the mod builds it when it is constructed, and
+ * it sends while a server runs, to that server's command sources and console.
  * <pre>{@code
- * @SubscribeEvent
- * void starting(ServerStartingEvent event) {
- *     messenger = NeoForgeKeystone.messenger(event.getServer(), LOGGER)
+ * public MyMod(IEventBus bus) {
+ *     messenger = NeoForgeKeystone.messenger(LOGGER)
  *             .semantica(semantica)
  *             .build();
  * }
@@ -44,33 +43,30 @@ import java.util.function.Function;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class NeoForgeKeystone {
 	/**
-	 * Starts a messenger to the server's command sources: players, the console and other senders of commands. A
-	 * player is reached through {@code player.createCommandSourceStack()}.
+	 * Starts a messenger to command sources: players, the console and other senders of commands. A player is reached
+	 * through {@code player.createCommandSourceStack()}.
 	 *
-	 * @param server the server
 	 * @param logger the mod's logger
 	 * @return the builder
 	 */
-	public static @NotNull Builder<CommandSourceStack> messenger(@NotNull MinecraftServer server, @NotNull Logger logger) {
-		NeoForgePlatform platform = platform(server, logger);
+	public static @NotNull Builder<CommandSourceStack> messenger(@NotNull Logger logger) {
+		NeoForgePlatform platform = platform(logger);
 		return new Builder<>(platform, platform::recipient);
 	}
 
 	/**
 	 * Starts a messenger to the mod's own sender type, such as its own player.
 	 *
-	 * @param server     the server
 	 * @param logger     the mod's logger
 	 * @param recipients returns the recipient of each of the mod's senders
 	 * @param <S>        the mod's sender type
 	 * @return the builder
 	 */
 	public static <S> @NotNull Builder<S> messenger(
-			@NotNull MinecraftServer server,
 			@NotNull Logger logger,
 			@NotNull Function<? super S, ? extends Recipient> recipients
 	) {
-		return new Builder<>(platform(server, logger), Objects.requireNonNull(recipients, "recipients"));
+		return new Builder<>(platform(logger), Objects.requireNonNull(recipients, "recipients"));
 	}
 
 	/**
@@ -83,9 +79,8 @@ public final class NeoForgeKeystone {
 		return new DefaultMarkup(new AdventureV4Format(), Objects.requireNonNull(policy, "policy"));
 	}
 
-	private static NeoForgePlatform platform(MinecraftServer server, Logger logger) {
-		Objects.requireNonNull(server, "server");
-		return new NeoForgePlatform(server, MinecraftServerAudiences.of(server), Objects.requireNonNull(logger, "logger"));
+	private static NeoForgePlatform platform(Logger logger) {
+		return new NeoForgePlatform(ServerLifecycleHooks::getCurrentServer, MinecraftServerAudiences::of, Objects.requireNonNull(logger, "logger"));
 	}
 
 	/**
