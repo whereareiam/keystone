@@ -30,6 +30,8 @@ dependencies {
     api(libs.semantica.format.adventure.v4)
     api(libs.adventure.platform.neoforge)
     api(libs.bundles.adventure.neoforge)
+    // Every Adventure module adventure-platform-neoforge nests, at the version Keystone brings, so none stays behind.
+    api(platform(libs.adventure.neoforge.bom))
 
     testImplementation(testFixtures(projects.keystoneCommon))
     testImplementation(libs.mockito)
