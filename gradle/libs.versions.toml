@@ -52,6 +52,7 @@ adventure-plain = { group = "net.kyori", name = "adventure-text-serializer-plain
 adventure-platform-bukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-platform" }
 adventure-platform-bungeecord = { group = "net.kyori", name = "adventure-platform-bungeecord", version.ref = "adventure-platform" }
 adventure-platform-neoforge = { group = "net.kyori", name = "adventure-platform-neoforge", version.ref = "adventure-platform-neoforge" }
+adventure-neoforge-bom = { group = "net.kyori", name = "adventure-bom", version.ref = "adventure-neoforge" }
 adventure-neoforge-api = { group = "net.kyori", name = "adventure-api", version.ref = "adventure-neoforge" }
 adventure-neoforge-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure-neoforge" }
 
