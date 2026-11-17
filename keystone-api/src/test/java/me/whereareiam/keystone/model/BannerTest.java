@@ -1,6 +1,7 @@
 package me.whereareiam.keystone.model;
 
 import me.whereareiam.semantica.Content;
+import me.whereareiam.semantica.Value;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -16,6 +17,6 @@ class BannerTest {
 
 		assertEquals(List.of(Content.of("one"), Content.of("two {n}")), withValues.getLines());
 		assertEquals(Map.of(), banner.getValues());
-		assertEquals(Map.of("n", 2), withValues.getValues());
+		assertEquals(Map.of("n", Value.number(2)), withValues.getValues());
 	}
 }

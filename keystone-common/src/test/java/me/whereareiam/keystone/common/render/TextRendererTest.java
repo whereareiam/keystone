@@ -7,6 +7,7 @@ import me.whereareiam.keystone.common.fixture.TestFormat;
 import me.whereareiam.keystone.common.fixture.TestRecipient;
 import me.whereareiam.keystone.common.fixture.TestSemantica;
 import me.whereareiam.semantica.Content;
+import me.whereareiam.semantica.Value;
 import me.whereareiam.semantica.format.adventure.TagPolicy;
 import me.whereareiam.semantica.message.ResolvedMessage;
 import net.kyori.adventure.text.Component;
@@ -33,19 +34,19 @@ class TextRendererTest {
 
 	@Test
 	void rendersInTheRecipientsLanguage() {
-		List<Component> rendered = renderer().render(Content.of("{@greeting}"), Map.of("player", "all"), List.of(german, english));
+		List<Component> rendered = renderer().render(Content.of("{@greeting}"), Map.of("player", Value.text("all")), List.of(german, english));
 
 		assertEquals(List.of("Hallo, all!", "Hello, all!"), rendered.stream().map(TextRendererTest::plain).toList());
 	}
 
 	@Test
 	void fallsBackAlongTheChain() {
-		assertEquals("Wait 3 seconds.", plain(renderer().render(Content.of("{@cooldown}"), Map.of("time", 3), german)));
+		assertEquals("Wait 3 seconds.", plain(renderer().render(Content.of("{@cooldown}"), Map.of("time", Value.number(3)), german)));
 	}
 
 	@Test
 	void readsTheMarkupOfLiteralPartsOnly() {
-		Component rendered = renderer().render(Content.of("{@greeting}"), Map.of("player", "<red>Eve"), english);
+		Component rendered = renderer().render(Content.of("{@greeting}"), Map.of("player", Value.text("<red>Eve")), english);
 
 		assertEquals("Hello, <red>Eve!", plain(rendered));
 		assertEquals(NamedTextColor.GOLD, rendered.color());
@@ -56,7 +57,7 @@ class TextRendererTest {
 		Placeholders.Text server = (recipient, text) -> text.replace("%server%", "Lobby of " + recipient.name());
 		Placeholders.Text upper = (recipient, text) -> text.replace("Lobby", "LOBBY");
 
-		Component rendered = renderer(server, upper).render(Content.of("%server% {player}"), Map.of("player", "%server%"), english);
+		Component rendered = renderer(server, upper).render(Content.of("%server% {player}"), Map.of("player", Value.text("%server%")), english);
 
 		assertEquals("LOBBY of Bob %server%", plain(rendered));
 	}
@@ -65,7 +66,7 @@ class TextRendererTest {
 	void tagPlaceholdersAreTagsOfLiteralParts() {
 		Placeholders.Tags online = () -> Placeholder.unparsed("online", "12");
 
-		Component rendered = renderer(online).render(Content.of("<online> online, {player}"), Map.of("player", "<online>"), english);
+		Component rendered = renderer(online).render(Content.of("<online> online, {player}"), Map.of("player", Value.text("<online>")), english);
 
 		assertEquals("12 online, <online>", plain(rendered));
 	}
@@ -74,7 +75,7 @@ class TextRendererTest {
 	void recipientsWithTheSameResultShareOneRendering() {
 		Recipient carol = TestRecipient.player("Carol", Locale.ENGLISH);
 
-		List<Component> rendered = renderer().render(Content.of("{@greeting}"), Map.of("player", "all"), List.of(english, german, carol));
+		List<Component> rendered = renderer().render(Content.of("{@greeting}"), Map.of("player", Value.text("all")), List.of(english, german, carol));
 
 		assertEquals(2, format.renders);
 		assertSame(rendered.get(0), rendered.get(2));
