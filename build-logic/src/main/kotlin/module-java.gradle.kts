@@ -37,6 +37,15 @@ tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
 }
 
+// A Java module name of its own, such as me.whereareiam.keystone.platform.common, so that a NeoForge mod can nest the
+// jar and no two jars share a module.
+tasks.named<Jar>("jar") {
+    val moduleName = "me.whereareiam.keystone." + project.name.removePrefix("keystone-").replace('-', '.')
+    manifest {
+        attributes("Automatic-Module-Name" to moduleName)
+    }
+}
+
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
     // Mockito attaches its agent to mock platform types.
