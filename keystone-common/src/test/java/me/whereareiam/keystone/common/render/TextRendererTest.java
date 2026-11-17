@@ -7,10 +7,12 @@ import me.whereareiam.keystone.common.fixture.TestFormat;
 import me.whereareiam.keystone.common.fixture.TestRecipient;
 import me.whereareiam.keystone.common.fixture.TestSemantica;
 import me.whereareiam.semantica.Content;
+import me.whereareiam.semantica.Message;
 import me.whereareiam.semantica.Value;
 import me.whereareiam.semantica.format.adventure.TagPolicy;
 import me.whereareiam.semantica.message.ResolvedMessage;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -63,6 +65,17 @@ class TextRendererTest {
 	}
 
 	@Test
+	void textPlaceholdersFillTheLiteralsOfALinkedValuesContent() {
+		Placeholders.Text server = (recipient, text) -> text.replace("%server%", "Lobby");
+		Value lobby = Value.linked(Value.nested(Message.of("lobby")), Value.Link.runCommand("/lobby"));
+
+		Component rendered = renderer(server).render(Content.of("{lobby}"), Map.of("lobby", lobby), english);
+
+		assertEquals("Back to Lobby", plain(rendered));
+		assertEquals(List.of(ClickEvent.runCommand("/lobby")), clicks(rendered));
+	}
+
+	@Test
 	void tagPlaceholdersAreTagsOfLiteralParts() {
 		Placeholders.Tags online = () -> Placeholder.unparsed("online", "12");
 
@@ -104,6 +117,14 @@ class TextRendererTest {
 		for (Placeholders source : placeholders) options.placeholder(source);
 
 		return new TextRenderer(options.build());
+	}
+
+	private static List<ClickEvent> clicks(Component component) {
+		List<ClickEvent> clicks = new ArrayList<>();
+		if (component.clickEvent() != null) clicks.add(component.clickEvent());
+		component.children().forEach(child -> clicks.addAll(clicks(child)));
+
+		return clicks;
 	}
 
 	private static String plain(Component component) {

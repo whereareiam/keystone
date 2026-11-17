@@ -92,13 +92,21 @@ public final class TextRenderer {
 	private ResolvedMessage fill(ResolvedMessage message, Recipient recipient) {
 		if (texts.isEmpty()) return message;
 
-		List<ResolvedMessage.Part> parts = new ArrayList<>(message.getParts().size());
-		for (ResolvedMessage.Part part : message.getParts()) {
-			if (part instanceof ResolvedMessage.Literal literal) parts.add(new ResolvedMessage.Literal(fill(literal.text(), recipient)));
-			else parts.add(part);
+		return new ResolvedMessage(message.getKey(), message.getLocale(), fill(message.getParts(), recipient), message.isFound());
+	}
+
+	// Literal parts, also those of a linked value's content; never values.
+	private List<ResolvedMessage.Part> fill(List<ResolvedMessage.Part> parts, Recipient recipient) {
+		List<ResolvedMessage.Part> filled = new ArrayList<>(parts.size());
+		for (ResolvedMessage.Part part : parts) {
+			filled.add(switch (part) {
+				case ResolvedMessage.Literal literal -> new ResolvedMessage.Literal(fill(literal.text(), recipient));
+				case ResolvedMessage.Linked linked -> new ResolvedMessage.Linked(fill(linked.parts(), recipient), linked.link());
+				case ResolvedMessage.Filled value -> value;
+			});
 		}
 
-		return new ResolvedMessage(message.getKey(), message.getLocale(), parts, message.isFound());
+		return filled;
 	}
 
 	private String fill(String literal, Recipient recipient) {

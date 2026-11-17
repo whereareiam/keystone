@@ -16,6 +16,7 @@ import java.util.Locale;
  *   <li>{@code greeting}: {@code <gold>Hello, {player}!} / {@code <gold>Hallo, {player}!}</li>
  *   <li>{@code cooldown}: wait {@code {time}} seconds, English only</li>
  *   <li>{@code prefix}: {@code [S]}</li>
+ *   <li>{@code lobby}: {@code <gray>Back to %server%}, a text placeholder, English only</li>
  * </ul>
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -28,6 +29,7 @@ public final class TestSemantica {
 				.put(GERMAN, "greeting", "<gold>Hallo, {player}!")
 				.put(Locale.ENGLISH, "cooldown", "Wait {time} seconds.")
 				.put(Locale.ENGLISH, "prefix", "[S]")
+				.put(Locale.ENGLISH, "lobby", "<gray>Back to %server%")
 				.put(Locale.ENGLISH, "restart", "Restart in {seconds} seconds");
 
 		return Semantica.builder()
