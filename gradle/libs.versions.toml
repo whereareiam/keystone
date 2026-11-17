@@ -19,6 +19,14 @@ paper = "1.21.11-R0.1-SNAPSHOT"
 velocity = "3.5.1"
 bungeecord = "1.21-R0.4"
 adventure-platform = "4.4.1"
+neoforge = "21.1.252"
+# 6.0.1 is the last adventure-platform-neoforge for Minecraft 1.21.1; it nests Adventure 4.17
+adventure-platform-neoforge = "6.0.1"
+# the Adventure Keystone brings to NeoForge: Semantica's format for Adventure 4 needs 4.25 or later, and NeoForge loads
+# the highest version a mod nests, so adventure-platform-neoforge runs on it too; NeoForge's tests run on it
+adventure-neoforge = "4.26.1"
+# the ICU4J Semantica asks for, newer than the one Minecraft 1.21.1 pins; NeoForge's tests run on it
+icu4j = "79.1"
 
 # integrations
 placeholderapi = "2.12.3"
@@ -43,6 +51,9 @@ adventure-minimessage = { group = "net.kyori", name = "adventure-text-minimessag
 adventure-plain = { group = "net.kyori", name = "adventure-text-serializer-plain", version.ref = "adventure" }
 adventure-platform-bukkit = { group = "net.kyori", name = "adventure-platform-bukkit", version.ref = "adventure-platform" }
 adventure-platform-bungeecord = { group = "net.kyori", name = "adventure-platform-bungeecord", version.ref = "adventure-platform" }
+adventure-platform-neoforge = { group = "net.kyori", name = "adventure-platform-neoforge", version.ref = "adventure-platform-neoforge" }
+adventure-neoforge-api = { group = "net.kyori", name = "adventure-api", version.ref = "adventure-neoforge" }
+adventure-neoforge-minimessage = { group = "net.kyori", name = "adventure-text-minimessage", version.ref = "adventure-neoforge" }
 
 # semantica
 semantica-api = { group = "me.whereareiam.semantica", name = "semantica-api", version.ref = "semantica" }
@@ -70,3 +81,4 @@ intercept-api = { group = "me.whereareiam.intercept", name = "api", version.ref 
 
 [bundles]
 adventure = ["adventure-api", "adventure-minimessage"]
+adventure-neoforge = ["adventure-neoforge-api", "adventure-neoforge-minimessage"]

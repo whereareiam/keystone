@@ -4,7 +4,7 @@ version: 2.0.0
 
 # Keystone 2.0.0 - Delivery
 
-Keystone 2.0.0 is rebuilt on Semantica: it sends a plugin's translated messages and the texts admins write in configs to each recipient in their own language, the one they chose in Intercept or their client's, as chat, action bar, title, boss bar or sound, with PlaceholderAPI, PAPIProxyBridge and MiniPlaceholders filled in. It runs on Paper, Bukkit, Velocity and BungeeCord and needs Java 21.
+Keystone 2.0.0 is rebuilt on Semantica: it sends a plugin's translated messages and the texts admins write in configs to each recipient in their own language, the one they chose in Intercept or their client's, as chat, action bar, title, boss bar or sound, with PlaceholderAPI, PAPIProxyBridge and MiniPlaceholders filled in. It runs on Paper, Bukkit, Velocity, BungeeCord and NeoForge 1.21.1 servers and needs Java 21.
 
 ## Upgrading
 

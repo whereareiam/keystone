@@ -1,0 +1,9 @@
+# Keystone's NeoForge platform and its tests, loaded as a mod only while the tests run
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "MIT"
+
+[[mods]]
+modId = "keystone_test"
+version = "0"
+displayName = "Keystone tests"
