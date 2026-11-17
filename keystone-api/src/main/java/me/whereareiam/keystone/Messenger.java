@@ -84,6 +84,16 @@ public interface Messenger<S> {
 	void discard(@NotNull S sender);
 
 	/**
+	 * Returns how the messenger sees a sender: its name, unique id, client language and whether it is the console.
+	 * A library that works with the plugin's senders, such as a command framework keeping cooldowns per player, asks
+	 * the messenger rather than mapping senders a second time.
+	 *
+	 * @param sender the sender
+	 * @return its recipient
+	 */
+	@NotNull Recipient recipient(@NotNull S sender);
+
+	/**
 	 * Returns the display files the messenger takes translated messages' parts from.
 	 *
 	 * @return the display files
